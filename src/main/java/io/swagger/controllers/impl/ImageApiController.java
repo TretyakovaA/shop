@@ -35,7 +35,9 @@ public class ImageApiController implements ImageApi {
         this.request = request;
     }
 
-    public ResponseEntity<List<byte[]>> updateImage(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("id") Integer id,@Parameter(description = "file detail") @Valid @RequestPart("file") MultipartFile image) {
+    public ResponseEntity<List<byte[]>> updateImage(@Parameter(in = ParameterIn.PATH, description = "", required=true,
+            schema=@Schema()) @PathVariable("id") Integer id,
+                                                    @Parameter(description = "file detail") @Valid @RequestPart("file") MultipartFile image) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {

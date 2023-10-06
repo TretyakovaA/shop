@@ -1,6 +1,7 @@
 package io.swagger.controllers.impl;
 
 
+import io.swagger.dto.RegisterReqDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -9,8 +10,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import io.swagger.dto.LoginReq;
-import io.swagger.dto.RegisterReq;
+import io.swagger.dto.LoginReqDto;
 import io.swagger.dto.RoleEnum;
 import io.swagger.services.api.AuthService;
 
@@ -25,7 +25,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginReq req) {
+    public ResponseEntity<?> login(@RequestBody LoginReqDto req) {
         if (authService.login(req.getUsername(), req.getPassword())) {
             return ResponseEntity.ok().build();
         } else {
@@ -34,7 +34,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterReq req) {
+    public ResponseEntity<?> register(@RequestBody RegisterReqDto req) {
         RoleEnum roleEnum = req.getRole() == null ? USER : req.getRole();
         if (authService.register(req, roleEnum)) {
             return ResponseEntity.ok().build();

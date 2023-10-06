@@ -1,25 +1,26 @@
 package io.swagger.dto;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.Objects;
+
 /**
- * LoginReq
+ * LoginReqDto
  */
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-08-23T14:28:14.858562274Z[GMT]")
 
 
-public class LoginReq   {
+public class LoginReqDto {
   @JsonProperty("password")
   private String password = null;
 
   @JsonProperty("username")
   private String username = null;
 
-  public LoginReq password(String password) {
+  public LoginReqDto password(String password) {
     this.password = password;
     return this;
   }
@@ -38,7 +39,7 @@ public class LoginReq   {
     this.password = password;
   }
 
-  public LoginReq username(String username) {
+  public LoginReqDto username(String username) {
     this.username = username;
     return this;
   }
@@ -66,7 +67,7 @@ public class LoginReq   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    LoginReq loginReq = (LoginReq) o;
+    LoginReqDto loginReq = (LoginReqDto) o;
     return Objects.equals(this.password, loginReq.password) &&
         Objects.equals(this.username, loginReq.username);
   }
@@ -79,7 +80,7 @@ public class LoginReq   {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class LoginReq {\n");
+    sb.append("class LoginReqDto {\n");
     
     sb.append("    password: ").append(toIndentedString(password)).append("\n");
     sb.append("    username: ").append(toIndentedString(username)).append("\n");

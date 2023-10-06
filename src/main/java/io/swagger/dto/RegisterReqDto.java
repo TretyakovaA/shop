@@ -2,19 +2,17 @@ package io.swagger.dto;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 /**
- * RegisterReq
+ * RegisterReqDto
  */
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-08-23T14:28:14.858562274Z[GMT]")
 
 
-public class RegisterReq   {
+public class RegisterReqDto {
   @JsonProperty("username")
   private String username = null;
 
@@ -34,7 +32,7 @@ public class RegisterReq   {
   @JsonProperty("role")
   private RoleEnum role = null;
 
-  public RegisterReq username(String username) {
+  public RegisterReqDto username(String username) {
     this.username = username;
     return this;
   }
@@ -53,7 +51,7 @@ public class RegisterReq   {
     this.username = username;
   }
 
-  public RegisterReq password(String password) {
+  public RegisterReqDto password(String password) {
     this.password = password;
     return this;
   }
@@ -72,7 +70,7 @@ public class RegisterReq   {
     this.password = password;
   }
 
-  public RegisterReq firstName(String firstName) {
+  public RegisterReqDto firstName(String firstName) {
     this.firstName = firstName;
     return this;
   }
@@ -91,7 +89,7 @@ public class RegisterReq   {
     this.firstName = firstName;
   }
 
-  public RegisterReq lastName(String lastName) {
+  public RegisterReqDto lastName(String lastName) {
     this.lastName = lastName;
     return this;
   }
@@ -110,7 +108,7 @@ public class RegisterReq   {
     this.lastName = lastName;
   }
 
-  public RegisterReq phone(String phone) {
+  public RegisterReqDto phone(String phone) {
     this.phone = phone;
     return this;
   }
@@ -129,7 +127,7 @@ public class RegisterReq   {
     this.phone = phone;
   }
 
-  public RegisterReq role(RoleEnum role) {
+  public RegisterReqDto role(RoleEnum role) {
     this.role = role;
     return this;
   }
@@ -157,13 +155,13 @@ public class RegisterReq   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    RegisterReq registerReq = (RegisterReq) o;
-    return Objects.equals(this.username, registerReq.username) &&
-        Objects.equals(this.password, registerReq.password) &&
-        Objects.equals(this.firstName, registerReq.firstName) &&
-        Objects.equals(this.lastName, registerReq.lastName) &&
-        Objects.equals(this.phone, registerReq.phone) &&
-        Objects.equals(this.role, registerReq.role);
+    RegisterReqDto registerReqDto = (RegisterReqDto) o;
+    return Objects.equals(this.username, registerReqDto.username) &&
+        Objects.equals(this.password, registerReqDto.password) &&
+        Objects.equals(this.firstName, registerReqDto.firstName) &&
+        Objects.equals(this.lastName, registerReqDto.lastName) &&
+        Objects.equals(this.phone, registerReqDto.phone) &&
+        Objects.equals(this.role, registerReqDto.role);
   }
 
   @Override
@@ -174,7 +172,7 @@ public class RegisterReq   {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class RegisterReq {\n");
+    sb.append("class RegisterReqDto {\n");
     
     sb.append("    username: ").append(toIndentedString(username)).append("\n");
     sb.append("    password: ").append(toIndentedString(password)).append("\n");

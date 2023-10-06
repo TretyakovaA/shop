@@ -1,20 +1,20 @@
 package io.swagger.dto;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 /**
- * CreateAds
+ * CreateAdDto
  */
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-08-23T14:28:14.858562274Z[GMT]")
 
 
-public class CreateAds   {
+public class CreateAdDto {
   @JsonProperty("description")
   private String description = null;
 
@@ -24,7 +24,7 @@ public class CreateAds   {
   @JsonProperty("title")
   private String title = null;
 
-  public CreateAds description(String description) {
+  public CreateAdDto description(String description) {
     this.description = description;
     return this;
   }
@@ -44,7 +44,7 @@ public class CreateAds   {
     this.description = description;
   }
 
-  public CreateAds price(Integer price) {
+  public CreateAdDto price(Integer price) {
     this.price = price;
     return this;
   }
@@ -64,7 +64,7 @@ public class CreateAds   {
     this.price = price;
   }
 
-  public CreateAds title(String title) {
+  public CreateAdDto title(String title) {
     this.title = title;
     return this;
   }
@@ -93,10 +93,10 @@ public class CreateAds   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    CreateAds createAds = (CreateAds) o;
-    return Objects.equals(this.description, createAds.description) &&
-        Objects.equals(this.price, createAds.price) &&
-        Objects.equals(this.title, createAds.title);
+    CreateAdDto createAdDto = (CreateAdDto) o;
+    return Objects.equals(this.description, createAdDto.description) &&
+        Objects.equals(this.price, createAdDto.price) &&
+        Objects.equals(this.title, createAdDto.title);
   }
 
   @Override
@@ -107,7 +107,7 @@ public class CreateAds   {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class CreateAds {\n");
+    sb.append("class CreateAdDto {\n");
     
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
     sb.append("    price: ").append(toIndentedString(price)).append("\n");

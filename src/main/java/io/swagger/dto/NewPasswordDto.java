@@ -6,20 +6,20 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 /**
- * NewPassword
+ * NewPasswordDto
  */
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-08-23T14:28:14.858562274Z[GMT]")
 
 
-public class NewPassword   {
+public class NewPasswordDto {
   @JsonProperty("currentPassword")
   private String currentPassword = null;
 
   @JsonProperty("newPassword")
   private String newPassword = null;
 
-  public NewPassword currentPassword(String currentPassword) {
+  public NewPasswordDto currentPassword(String currentPassword) {
     this.currentPassword = currentPassword;
     return this;
   }
@@ -38,7 +38,7 @@ public class NewPassword   {
     this.currentPassword = currentPassword;
   }
 
-  public NewPassword newPassword(String newPassword) {
+  public NewPasswordDto newPassword(String newPassword) {
     this.newPassword = newPassword;
     return this;
   }
@@ -66,9 +66,9 @@ public class NewPassword   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    NewPassword newPassword = (NewPassword) o;
-    return Objects.equals(this.currentPassword, newPassword.currentPassword) &&
-        Objects.equals(this.newPassword, newPassword.newPassword);
+    NewPasswordDto newPasswordDto = (NewPasswordDto) o;
+    return Objects.equals(this.currentPassword, newPasswordDto.currentPassword) &&
+        Objects.equals(this.newPassword, newPasswordDto.newPassword);
   }
 
   @Override
@@ -79,7 +79,7 @@ public class NewPassword   {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class NewPassword {\n");
+    sb.append("class NewPasswordDto {\n");
     
     sb.append("    currentPassword: ").append(toIndentedString(currentPassword)).append("\n");
     sb.append("    newPassword: ").append(toIndentedString(newPassword)).append("\n");

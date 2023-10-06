@@ -22,7 +22,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewPassword'
+              $ref: '#/components/schemas/NewPasswordDto'
         required: true
       responses:
         '200':
@@ -30,7 +30,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/NewPassword'
+                $ref: '#/components/schemas/NewPasswordDto'
         '401':
           description: Unauthorized
           content: {}
@@ -51,7 +51,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RegisterReq'
+              $ref: '#/components/schemas/RegisterReqDto'
         required: true
       responses:
         '404':
@@ -75,7 +75,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/LoginReq'
+              $ref: '#/components/schemas/LoginReqDto'
         required: true
       responses:
         '200':
@@ -103,7 +103,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/ResponseWrapperAds'
+                $ref: '#/components/schemas/ResponseWrapperAdDto'
     post:
       tags:
         - Объявления
@@ -119,7 +119,7 @@ paths:
               type: object
               properties:
                 properties:
-                  $ref: '#/components/schemas/CreateAds'
+                  $ref: '#/components/schemas/CreateAdDto'
                 image:
                   type: string
                   format: binary
@@ -129,7 +129,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/Ads'
+                $ref: '#/components/schemas/AdDto'
         '404':
           description: Not Found
         '403':
@@ -156,7 +156,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/ResponseWrapperComment'
+                $ref: '#/components/schemas/ResponseWrapperCommentDto'
         '404':
           description: Not Found
 
@@ -175,7 +175,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Comment'
+              $ref: '#/components/schemas/CommentDto'
         required: true
       responses:
         '200':
@@ -183,7 +183,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/Comment'
+                $ref: '#/components/schemas/CommentDto'
         '404':
           description: Not Found
         '403':
@@ -203,7 +203,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/UserDto'
           description: OK
         '401':
           content: {}
@@ -223,7 +223,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/UserDto'
         required: true
       responses:
         '200':
@@ -231,7 +231,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/UserDto'
         '204':
           description: No Content
           content: {}
@@ -286,7 +286,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/FullAds'
+                $ref: '#/components/schemas/FullAdDto'
         '404':
           description: Not Found
     delete:
@@ -327,7 +327,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateAds'
+              $ref: '#/components/schemas/CreateAdDto'
         required: true
       responses:
         '200':
@@ -335,7 +335,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/Ads'
+                $ref: '#/components/schemas/AdDto'
         '404':
           description: Not Found
         '403':
@@ -368,7 +368,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/Comment'
+                $ref: '#/components/schemas/CommentDto'
         '404':
           description: Not Found
     delete:
@@ -420,7 +420,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Comment'
+              $ref: '#/components/schemas/CommentDto'
         required: true
       responses:
         '200':
@@ -428,7 +428,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/Comment'
+                $ref: '#/components/schemas/CommentDto'
         '404':
           description: Not Found
         '403':
@@ -467,7 +467,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/ResponseWrapperAds'
+                $ref: '#/components/schemas/ResponseWrapperAdDto'
           description: OK
         '401':
           content: {}
@@ -626,7 +626,7 @@ components:
         results:
           type: array
           items:
-            $ref: '#/components/schemas/Ads'
+            $ref: '#/components/schemas/AdDto'
     FullAds:
       type: object
       properties:
@@ -661,4 +661,4 @@ components:
         results:
           type: array
           items:
-            $ref: '#/components/schemas/Comment'
+            $ref: '#/components/schemas/CommentDto'

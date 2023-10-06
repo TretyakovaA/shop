@@ -5,21 +5,18 @@
  */
 package io.swagger.controllers.interfaces;
 
-import io.swagger.dto.NewPassword;
-import io.swagger.dto.User;
+import io.swagger.dto.NewPasswordDto;
+import io.swagger.dto.UserDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
@@ -30,7 +27,7 @@ public interface UsersApi {
 
     @Operation(summary = "getUser", description = "", tags={ "Пользователи" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "*/*", schema = @Schema(implementation = User.class))),
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "*/*", schema = @Schema(implementation = UserDto.class))),
         
         @ApiResponse(responseCode = "401", description = "Unauthorized"),
         
@@ -40,12 +37,12 @@ public interface UsersApi {
     @RequestMapping(value = "/users/me",
         produces = { "*/*" }, 
         method = RequestMethod.GET)
-    ResponseEntity<User> getUser1();
+    ResponseEntity<UserDto> getUser1(@Parameter(name = "id", description = "id", required = true) @PathVariable("id") Integer id);
 
 
     @Operation(summary = "setPassword", description = "", tags={ "Пользователи" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "*/*", schema = @Schema(implementation = NewPassword.class))),
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "*/*", schema = @Schema(implementation = NewPasswordDto.class))),
         
         @ApiResponse(responseCode = "401", description = "Unauthorized"),
         
@@ -56,12 +53,13 @@ public interface UsersApi {
         produces = { "*/*" }, 
         consumes = { "application/json" }, 
         method = RequestMethod.POST)
-    ResponseEntity<NewPassword> setPassword(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody NewPassword body);
+    ResponseEntity<NewPasswordDto> setPassword(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema())
+                                               @Valid @RequestBody NewPasswordDto body);
 
 
     @Operation(summary = "updateUser", description = "", tags={ "Пользователи" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "*/*", schema = @Schema(implementation = User.class))),
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "*/*", schema = @Schema(implementation = UserDto.class))),
         
         @ApiResponse(responseCode = "204", description = "No Content"),
         
@@ -74,7 +72,8 @@ public interface UsersApi {
         produces = { "*/*" }, 
         consumes = { "application/json" }, 
         method = RequestMethod.PATCH)
-    ResponseEntity<User> updateUser(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody User body);
+    ResponseEntity<UserDto> updateUser(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema())
+                                       @Valid @RequestBody UserDto body);
 
 
     @Operation(summary = "updateUserImage", description = "UpdateUserImage", tags={ "Пользователи" })

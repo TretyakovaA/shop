@@ -6,9 +6,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
-import io.swagger.dto.RegisterReq;
+import io.swagger.dto.RegisterReqDto;
 import io.swagger.dto.RoleEnum;
-import io.swagger.services.api.AuthService;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -34,14 +33,14 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public boolean register(RegisterReq registerReq, RoleEnum roleEnum) {
-        if (manager.userExists(registerReq.getUsername())) {
+    public boolean register(RegisterReqDto registerReqDto, RoleEnum roleEnum) {
+        if (manager.userExists(registerReqDto.getUsername())) {
             return false;
         }
         manager.createUser(
                 User.withDefaultPasswordEncoder()
-                        .password(registerReq.getPassword())
-                        .username(registerReq.getUsername())
+                        .password(registerReqDto.getPassword())
+                        .username(registerReqDto.getUsername())
                         .roles(roleEnum.name())
                         .build()
         );

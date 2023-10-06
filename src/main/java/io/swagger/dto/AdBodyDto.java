@@ -1,28 +1,29 @@
 package io.swagger.dto;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.model.StoredImage;
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.springframework.core.io.Resource;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 /**
- * AdsBody
+ * AdBodyDto
  */
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-08-23T14:28:14.858562274Z[GMT]")
 
 
-public class AdsBody   {
+public class AdBodyDto {
   @JsonProperty("properties")
-  private CreateAds properties = null;
+  private CreateAdDto properties = null;
 
   @JsonProperty("image")
-  private Resource image = null;
+  private StoredImage storedImage = null;
 
-  public AdsBody properties(CreateAds properties) {
+  public AdBodyDto properties(CreateAdDto properties) {
     this.properties = properties;
     return this;
   }
@@ -35,33 +36,33 @@ public class AdsBody   {
       @NotNull
 
     @Valid
-    public CreateAds getProperties() {
+    public CreateAdDto getProperties() {
     return properties;
   }
 
-  public void setProperties(CreateAds properties) {
+  public void setProperties(CreateAdDto properties) {
     this.properties = properties;
   }
 
-  public AdsBody image(Resource image) {
-    this.image = image;
+  public AdBodyDto image(StoredImage storedImage) {
+    this.storedImage = storedImage;
     return this;
   }
 
   /**
-   * Get image
-   * @return image
+   * Get storedImage
+   * @return storedImage
    **/
   @Schema(required = true, description = "")
       @NotNull
 
     @Valid
-    public Resource getImage() {
-    return image;
+    public StoredImage getImage() {
+    return storedImage;
   }
 
-  public void setImage(Resource image) {
-    this.image = image;
+  public void setImage(StoredImage storedImage) {
+    this.storedImage = storedImage;
   }
 
 
@@ -73,23 +74,23 @@ public class AdsBody   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    AdsBody adsBody = (AdsBody) o;
-    return Objects.equals(this.properties, adsBody.properties) &&
-        Objects.equals(this.image, adsBody.image);
+    AdBodyDto adBodyDto = (AdBodyDto) o;
+    return Objects.equals(this.properties, adBodyDto.properties) &&
+        Objects.equals(this.storedImage, adBodyDto.storedImage);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(properties, image);
+    return Objects.hash(properties, storedImage);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class AdsBody {\n");
+    sb.append("class AdBodyDto {\n");
     
     sb.append("    properties: ").append(toIndentedString(properties)).append("\n");
-    sb.append("    image: ").append(toIndentedString(image)).append("\n");
+    sb.append("    storedImage: ").append(toIndentedString(storedImage)).append("\n");
     sb.append("}");
     return sb.toString();
   }

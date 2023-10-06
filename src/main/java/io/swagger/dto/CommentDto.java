@@ -6,13 +6,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 /**
- * Comment
+ * CommentDto
  */
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-08-23T14:28:14.858562274Z[GMT]")
 
 
-public class Comment   {
+public class CommentDto {
   @JsonProperty("author")
   private Integer author = null;
 
@@ -25,7 +25,7 @@ public class Comment   {
   @JsonProperty("text")
   private String text = null;
 
-  public Comment author(Integer author) {
+  public CommentDto author(Integer author) {
     this.author = author;
     return this;
   }
@@ -44,7 +44,7 @@ public class Comment   {
     this.author = author;
   }
 
-  public Comment createdAt(String createdAt) {
+  public CommentDto createdAt(String createdAt) {
     this.createdAt = createdAt;
     return this;
   }
@@ -63,7 +63,7 @@ public class Comment   {
     this.createdAt = createdAt;
   }
 
-  public Comment pk(Integer pk) {
+  public CommentDto pk(Integer pk) {
     this.pk = pk;
     return this;
   }
@@ -82,7 +82,7 @@ public class Comment   {
     this.pk = pk;
   }
 
-  public Comment text(String text) {
+  public CommentDto text(String text) {
     this.text = text;
     return this;
   }
@@ -110,11 +110,11 @@ public class Comment   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    Comment comment = (Comment) o;
-    return Objects.equals(this.author, comment.author) &&
-        Objects.equals(this.createdAt, comment.createdAt) &&
-        Objects.equals(this.pk, comment.pk) &&
-        Objects.equals(this.text, comment.text);
+    CommentDto commentDto = (CommentDto) o;
+    return Objects.equals(this.author, commentDto.author) &&
+        Objects.equals(this.createdAt, commentDto.createdAt) &&
+        Objects.equals(this.pk, commentDto.pk) &&
+        Objects.equals(this.text, commentDto.text);
   }
 
   @Override
@@ -125,7 +125,7 @@ public class Comment   {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class Comment {\n");
+    sb.append("class CommentDto {\n");
     
     sb.append("    author: ").append(toIndentedString(author)).append("\n");
     sb.append("    createdAt: ").append(toIndentedString(createdAt)).append("\n");

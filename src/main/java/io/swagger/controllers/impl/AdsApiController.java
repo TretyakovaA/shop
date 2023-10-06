@@ -1,13 +1,9 @@
 package io.swagger.controllers.impl;
 
-import io.swagger.controllers.interfaces.AdsApi;
-import io.swagger.dto.Ads;
-import io.swagger.dto.Comment;
-import io.swagger.dto.CreateAds;
-import io.swagger.dto.FullAds;
-import io.swagger.dto.ResponseWrapperAds;
-import io.swagger.dto.ResponseWrapperComment;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.controllers.interfaces.AdsApi;
+import io.swagger.dto.*;
+import io.swagger.services.api.AdService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -16,12 +12,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
+import javax.validation.Valid;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-08-23T14:28:14.858562274Z[GMT]")
 @RestController
@@ -34,146 +28,150 @@ public class AdsApiController implements AdsApi {
 
     private final HttpServletRequest request;
 
+    private final AdService adService;
+
     @org.springframework.beans.factory.annotation.Autowired
-    public AdsApiController(ObjectMapper objectMapper, HttpServletRequest request) {
+    public AdsApiController(ObjectMapper objectMapper, HttpServletRequest request, AdService adService) {
         this.objectMapper = objectMapper;
         this.request = request;
+        this.adService = adService;
     }
 
-    public ResponseEntity<Ads> addAds(@Parameter(in = ParameterIn.DEFAULT, description = "",schema=@Schema()) @RequestParam(value="properties", required=false)  CreateAds properties,@Parameter(description = "file detail") @Valid @RequestPart("file") MultipartFile image) {
+    public ResponseEntity<AdDto> addAds(@Parameter(in = ParameterIn.DEFAULT, description = "",
+            schema=@Schema()) @RequestParam(value="properties", required=false) CreateAdDto properties,
+                                        @Parameter(description = "file detail") @Valid @RequestPart("file") MultipartFile image) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<Ads>(objectMapper.readValue("{\n  \"image\" : [ \"image\", \"image\" ],\n  \"author\" : 6,\n  \"price\" : 5,\n  \"pk\" : 1,\n  \"title\" : \"title\"\n}", Ads.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<Ads>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
+            return ResponseEntity.ok(adService.addAds(properties, image));
+           }
 
-        return new ResponseEntity<Ads>(HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity<AdDto>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    public ResponseEntity<Comment> addComments(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("ad_pk") String adPk,@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody Comment body) {
+    public ResponseEntity<CommentDto> addComments(@Parameter(in = ParameterIn.PATH, description = "", required=true,
+            schema=@Schema()) @PathVariable("ad_pk") String adPk,
+                                                  @Parameter(in = ParameterIn.DEFAULT, description = "", required=true,
+                                                          schema=@Schema()) @Valid @RequestBody CommentDto body) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<Comment>(objectMapper.readValue("{\n  \"createdAt\" : \"createdAt\",\n  \"author\" : 6,\n  \"pk\" : 1,\n  \"text\" : \"text\"\n}", Comment.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<Comment>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.ok(adService.addComments(Integer.parseInt(adPk), body));
             }
+
+        return new ResponseEntity<CommentDto>(HttpStatus.NOT_IMPLEMENTED);
+    }
+
+    public ResponseEntity<Void> deleteComments(@Parameter(in = ParameterIn.PATH, description = "", required=true,
+            schema=@Schema()) @PathVariable("ad_pk") String adPk,
+                                               @Parameter(in = ParameterIn.PATH, description = "", required=true,
+                                                       schema=@Schema()) @PathVariable("id") Integer id) {
+        String accept = request.getHeader("Accept");
+        CommentDto result = adService.deleteComments(Integer.parseInt(adPk), id);
+        if (result == null) {
+            return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
+        } else {
+            return new ResponseEntity<Void>(HttpStatus.OK);
         }
 
-        return new ResponseEntity<Comment>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    public ResponseEntity<Void> deleteComments(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("ad_pk") String adPk,@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("id") Integer id) {
-        String accept = request.getHeader("Accept");
-        return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
-    }
-
-    public ResponseEntity<ResponseWrapperAds> getALLAds() {
+    public ResponseEntity getALLAds() {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<ResponseWrapperAds>(objectMapper.readValue("{\n  \"count\" : 0,\n  \"results\" : [ {\n    \"image\" : [ \"image\", \"image\" ],\n    \"author\" : 6,\n    \"price\" : 5,\n    \"pk\" : 1,\n    \"title\" : \"title\"\n  }, {\n    \"image\" : [ \"image\", \"image\" ],\n    \"author\" : 6,\n    \"price\" : 5,\n    \"pk\" : 1,\n    \"title\" : \"title\"\n  } ]\n}", ResponseWrapperAds.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<ResponseWrapperAds>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.ok(adService.getAllAds());
             }
-        }
 
-        return new ResponseEntity<ResponseWrapperAds>(HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity<ResponseWrapperAdDto>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    public ResponseEntity<FullAds> getAds(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("id") Integer id) {
+    public ResponseEntity<FullAdDto> getAds(@Parameter(in = ParameterIn.PATH, description = "", required=true,
+            schema=@Schema()) @PathVariable("id") Integer id) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<FullAds>(objectMapper.readValue("{\n  \"image\" : [ \"image\", \"image\" ],\n  \"authorLastName\" : \"authorLastName\",\n  \"authorFirstName\" : \"authorFirstName\",\n  \"phone\" : \"phone\",\n  \"price\" : 6,\n  \"description\" : \"description\",\n  \"pk\" : 0,\n  \"title\" : \"title\",\n  \"email\" : \"email\"\n}", FullAds.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<FullAds>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
+            return ResponseEntity.ok(adService.getAds(id));
+             }
 
-        return new ResponseEntity<FullAds>(HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity<FullAdDto>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    public ResponseEntity<ResponseWrapperAds> getAdsMeUsingGET(@Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema()) @Valid @RequestParam(value = "authenticated", required = false) Boolean authenticated,@Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema()) @Valid @RequestParam(value = "authorities[0].authority", required = false) String authorities0Authority,@Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema()) @Valid @RequestParam(value = "credentials", required = false) Object credentials,@Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema()) @Valid @RequestParam(value = "details", required = false) Object details,@Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema()) @Valid @RequestParam(value = "principal", required = false) Object principal) {
+    public ResponseEntity<ResponseWrapperAdDto> getAdsMeUsingGET(@Parameter(in = ParameterIn.QUERY, description = "" ,
+            schema=@Schema()) @Valid @RequestParam(value = "authenticated", required = false) Boolean authenticated,
+                                                                 @Parameter(in = ParameterIn.QUERY, description = "" ,
+                                                                          schema=@Schema()) @Valid
+                                                                  @RequestParam(value = "authorities[0].authority",
+                                                                          required = false) String authorities0Authority,
+                                                                 @Parameter(in = ParameterIn.QUERY, description = "" ,
+                                                                          schema=@Schema()) @Valid
+                                                                  @RequestParam(value = "credentials", required = false) Object credentials,
+                                                                 @Parameter(in = ParameterIn.QUERY, description = "" ,
+                                                                          schema=@Schema()) @Valid
+                                                                  @RequestParam(value = "details", required = false) Object details,
+                                                                 @Parameter(in = ParameterIn.QUERY, description = "" ,
+                                                                          schema=@Schema()) @Valid
+                                                                  @RequestParam(value = "principal", required = false) Object principal) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<ResponseWrapperAds>(objectMapper.readValue("{\n  \"count\" : 0,\n  \"results\" : [ {\n    \"image\" : [ \"image\", \"image\" ],\n    \"author\" : 6,\n    \"price\" : 5,\n    \"pk\" : 1,\n    \"title\" : \"title\"\n  }, {\n    \"image\" : [ \"image\", \"image\" ],\n    \"author\" : 6,\n    \"price\" : 5,\n    \"pk\" : 1,\n    \"title\" : \"title\"\n  } ]\n}", ResponseWrapperAds.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<ResponseWrapperAds>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
+            return ResponseEntity.ok(adService.getAdsMeUsingGET(authenticated, authorities0Authority, credentials, details, principal));
+             }
 
-        return new ResponseEntity<ResponseWrapperAds>(HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity<ResponseWrapperAdDto>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    public ResponseEntity<ResponseWrapperComment> getComments(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("ad_pk") String adPk) {
+    public ResponseEntity<ResponseWrapperCommentDto> getComments(@Parameter(in = ParameterIn.PATH,
+            description = "", required=true, schema=@Schema()) @PathVariable("ad_pk") String adPk) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<ResponseWrapperComment>(objectMapper.readValue("{\n  \"count\" : 0,\n  \"results\" : [ {\n    \"createdAt\" : \"createdAt\",\n    \"author\" : 6,\n    \"pk\" : 1,\n    \"text\" : \"text\"\n  }, {\n    \"createdAt\" : \"createdAt\",\n    \"author\" : 6,\n    \"pk\" : 1,\n    \"text\" : \"text\"\n  } ]\n}", ResponseWrapperComment.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<ResponseWrapperComment>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
+            return ResponseEntity.ok(adService.getComments(Integer.parseInt(adPk)));
+           }
 
-        return new ResponseEntity<ResponseWrapperComment>(HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity<ResponseWrapperCommentDto>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    public ResponseEntity<Comment> getComments1(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("ad_pk") String adPk,@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("id") Integer id) {
+    public ResponseEntity<CommentDto> getComments1(@Parameter(in = ParameterIn.PATH, description = "", required=true,
+            schema=@Schema()) @PathVariable("ad_pk") String adPk,
+                                                   @Parameter(in = ParameterIn.PATH, description = "", required=true,
+                                                           schema=@Schema()) @PathVariable("id") Integer id) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<Comment>(objectMapper.readValue("{\n  \"createdAt\" : \"createdAt\",\n  \"author\" : 6,\n  \"pk\" : 1,\n  \"text\" : \"text\"\n}", Comment.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<Comment>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
+            return ResponseEntity.ok(adService.getComments1(Integer.parseInt(adPk), id));
+             }
 
-        return new ResponseEntity<Comment>(HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity<CommentDto>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    public ResponseEntity<Void> removeAds(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("id") Integer id) {
+    public ResponseEntity<Void> removeAds(@Parameter(in = ParameterIn.PATH, description = "", required=true,
+            schema=@Schema()) @PathVariable("id") Integer id) {
         String accept = request.getHeader("Accept");
-        return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
-    }
-
-    public ResponseEntity<Ads> updateAds(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("id") Integer id,@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody CreateAds body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<Ads>(objectMapper.readValue("{\n  \"image\" : [ \"image\", \"image\" ],\n  \"author\" : 6,\n  \"price\" : 5,\n  \"pk\" : 1,\n  \"title\" : \"title\"\n}", Ads.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<Ads>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+        AdDto result = adService.removeAds(id);
+        if (result == null) {
+            return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
+        } else {
+            return new ResponseEntity<Void>(HttpStatus.OK);
         }
-
-        return new ResponseEntity<Ads>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    public ResponseEntity<Comment> updateComments(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("ad_pk") String adPk,@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("id") Integer id,@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody Comment body) {
+    public ResponseEntity<AdDto> updateAds(@Parameter(in = ParameterIn.PATH, description = "", required=true,
+            schema=@Schema()) @PathVariable("id") Integer id,
+                                           @Parameter(in = ParameterIn.DEFAULT, description = "", required=true,
+                                                    schema=@Schema()) @Valid @RequestBody CreateAdDto body) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<Comment>(objectMapper.readValue("{\n  \"createdAt\" : \"createdAt\",\n  \"author\" : 6,\n  \"pk\" : 1,\n  \"text\" : \"text\"\n}", Comment.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<Comment>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+            return ResponseEntity.ok(adService.updateAds(id, body));
         }
 
-        return new ResponseEntity<Comment>(HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity<AdDto>(HttpStatus.NOT_IMPLEMENTED);
     }
 
+    public ResponseEntity<CommentDto> updateComments(@Parameter(in = ParameterIn.PATH, description = "", required=true,
+            schema=@Schema()) @PathVariable("ad_pk") String adPk,
+                                                     @Parameter(in = ParameterIn.PATH, description = "", required=true,
+                                                             schema=@Schema()) @PathVariable("id") Integer id,
+                                                     @Parameter(in = ParameterIn.DEFAULT, description = "", required=true,
+                                                             schema=@Schema()) @Valid @RequestBody CommentDto body) {
+        String accept = request.getHeader("Accept");
+        if (accept != null && accept.contains("application/json")) {
+            return ResponseEntity.ok(adService.updateComments(Integer.parseInt(adPk), id, body));
+           }
+
+        return new ResponseEntity<CommentDto>(HttpStatus.NOT_IMPLEMENTED);
+    }
 }

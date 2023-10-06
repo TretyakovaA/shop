@@ -9,13 +9,13 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 
 /**
- * Ads
+ * AdDto
  */
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-08-23T14:28:14.858562274Z[GMT]")
 
 
-public class Ads   {
+public class AdDto {
   @JsonProperty("author")
   private Integer author = null;
 
@@ -32,7 +32,7 @@ public class Ads   {
   @JsonProperty("title")
   private String title = null;
 
-  public Ads author(Integer author) {
+  public AdDto author(Integer author) {
     this.author = author;
     return this;
   }
@@ -51,12 +51,12 @@ public class Ads   {
     this.author = author;
   }
 
-  public Ads image(List<String> image) {
+  public AdDto image(List<String> image) {
     this.image = image;
     return this;
   }
 
-  public Ads addImageItem(String imageItem) {
+  public AdDto addImageItem(String imageItem) {
     if (this.image == null) {
       this.image = new ArrayList<String>();
     }
@@ -78,7 +78,7 @@ public class Ads   {
     this.image = image;
   }
 
-  public Ads pk(Integer pk) {
+  public AdDto pk(Integer pk) {
     this.pk = pk;
     return this;
   }
@@ -97,7 +97,7 @@ public class Ads   {
     this.pk = pk;
   }
 
-  public Ads price(Integer price) {
+  public AdDto price(Integer price) {
     this.price = price;
     return this;
   }
@@ -116,7 +116,7 @@ public class Ads   {
     this.price = price;
   }
 
-  public Ads title(String title) {
+  public AdDto title(String title) {
     this.title = title;
     return this;
   }
@@ -144,12 +144,12 @@ public class Ads   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    Ads ads = (Ads) o;
-    return Objects.equals(this.author, ads.author) &&
-        Objects.equals(this.image, ads.image) &&
-        Objects.equals(this.pk, ads.pk) &&
-        Objects.equals(this.price, ads.price) &&
-        Objects.equals(this.title, ads.title);
+    AdDto adDto = (AdDto) o;
+    return Objects.equals(this.author, adDto.author) &&
+        Objects.equals(this.image, adDto.image) &&
+        Objects.equals(this.pk, adDto.pk) &&
+        Objects.equals(this.price, adDto.price) &&
+        Objects.equals(this.title, adDto.title);
   }
 
   @Override
@@ -160,7 +160,7 @@ public class Ads   {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class Ads {\n");
+    sb.append("class AdDto {\n");
     
     sb.append("    author: ").append(toIndentedString(author)).append("\n");
     sb.append("    image: ").append(toIndentedString(image)).append("\n");

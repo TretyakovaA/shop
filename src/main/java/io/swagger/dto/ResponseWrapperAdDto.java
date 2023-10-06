@@ -1,29 +1,30 @@
 package io.swagger.dto;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
+import java.util.Objects;
 
 /**
- * ResponseWrapperAds
+ * ResponseWrapperAdDto
  */
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-08-23T14:28:14.858562274Z[GMT]")
 
 
-public class ResponseWrapperAds   {
+public class ResponseWrapperAdDto {
   @JsonProperty("count")
   private Integer count = null;
 
   @JsonProperty("results")
   @Valid
-  private List<Ads> results = null;
+  private List<AdDto> results = null;
 
-  public ResponseWrapperAds count(Integer count) {
+  public ResponseWrapperAdDto count(Integer count) {
     this.count = count;
     return this;
   }
@@ -42,14 +43,14 @@ public class ResponseWrapperAds   {
     this.count = count;
   }
 
-  public ResponseWrapperAds results(List<Ads> results) {
+  public ResponseWrapperAdDto results(List<AdDto> results) {
     this.results = results;
     return this;
   }
 
-  public ResponseWrapperAds addResultsItem(Ads resultsItem) {
+  public ResponseWrapperAdDto addResultsItem(AdDto resultsItem) {
     if (this.results == null) {
-      this.results = new ArrayList<Ads>();
+      this.results = new ArrayList<AdDto>();
     }
     this.results.add(resultsItem);
     return this;
@@ -61,11 +62,11 @@ public class ResponseWrapperAds   {
    **/
   @Schema(description = "")
       @Valid
-    public List<Ads> getResults() {
+    public List<AdDto> getResults() {
     return results;
   }
 
-  public void setResults(List<Ads> results) {
+  public void setResults(List<AdDto> results) {
     this.results = results;
   }
 
@@ -78,9 +79,9 @@ public class ResponseWrapperAds   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ResponseWrapperAds responseWrapperAds = (ResponseWrapperAds) o;
-    return Objects.equals(this.count, responseWrapperAds.count) &&
-        Objects.equals(this.results, responseWrapperAds.results);
+    ResponseWrapperAdDto responseWrapperAdDto = (ResponseWrapperAdDto) o;
+    return Objects.equals(this.count, responseWrapperAdDto.count) &&
+        Objects.equals(this.results, responseWrapperAdDto.results);
   }
 
   @Override
@@ -91,7 +92,7 @@ public class ResponseWrapperAds   {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ResponseWrapperAds {\n");
+    sb.append("class ResponseWrapperAdDto {\n");
     
     sb.append("    count: ").append(toIndentedString(count)).append("\n");
     sb.append("    results: ").append(toIndentedString(results)).append("\n");

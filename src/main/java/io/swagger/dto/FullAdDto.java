@@ -9,13 +9,13 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 
 /**
- * FullAds
+ * FullAdDto
  */
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-08-23T14:28:14.858562274Z[GMT]")
 
 
-public class FullAds   {
+public class FullAdDto {
   @JsonProperty("authorFirstName")
   private String authorFirstName = null;
 
@@ -44,7 +44,7 @@ public class FullAds   {
   @JsonProperty("title")
   private String title = null;
 
-  public FullAds authorFirstName(String authorFirstName) {
+  public FullAdDto authorFirstName(String authorFirstName) {
     this.authorFirstName = authorFirstName;
     return this;
   }
@@ -63,7 +63,7 @@ public class FullAds   {
     this.authorFirstName = authorFirstName;
   }
 
-  public FullAds authorLastName(String authorLastName) {
+  public FullAdDto authorLastName(String authorLastName) {
     this.authorLastName = authorLastName;
     return this;
   }
@@ -82,7 +82,7 @@ public class FullAds   {
     this.authorLastName = authorLastName;
   }
 
-  public FullAds description(String description) {
+  public FullAdDto description(String description) {
     this.description = description;
     return this;
   }
@@ -101,7 +101,7 @@ public class FullAds   {
     this.description = description;
   }
 
-  public FullAds email(String email) {
+  public FullAdDto email(String email) {
     this.email = email;
     return this;
   }
@@ -120,12 +120,12 @@ public class FullAds   {
     this.email = email;
   }
 
-  public FullAds image(List<String> image) {
+  public FullAdDto image(List<String> image) {
     this.image = image;
     return this;
   }
 
-  public FullAds addImageItem(String imageItem) {
+  public FullAdDto addImageItem(String imageItem) {
     if (this.image == null) {
       this.image = new ArrayList<String>();
     }
@@ -147,7 +147,7 @@ public class FullAds   {
     this.image = image;
   }
 
-  public FullAds phone(String phone) {
+  public FullAdDto phone(String phone) {
     this.phone = phone;
     return this;
   }
@@ -166,7 +166,7 @@ public class FullAds   {
     this.phone = phone;
   }
 
-  public FullAds pk(Integer pk) {
+  public FullAdDto pk(Integer pk) {
     this.pk = pk;
     return this;
   }
@@ -185,7 +185,7 @@ public class FullAds   {
     this.pk = pk;
   }
 
-  public FullAds price(Integer price) {
+  public FullAdDto price(Integer price) {
     this.price = price;
     return this;
   }
@@ -204,7 +204,7 @@ public class FullAds   {
     this.price = price;
   }
 
-  public FullAds title(String title) {
+  public FullAdDto title(String title) {
     this.title = title;
     return this;
   }
@@ -232,16 +232,16 @@ public class FullAds   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    FullAds fullAds = (FullAds) o;
-    return Objects.equals(this.authorFirstName, fullAds.authorFirstName) &&
-        Objects.equals(this.authorLastName, fullAds.authorLastName) &&
-        Objects.equals(this.description, fullAds.description) &&
-        Objects.equals(this.email, fullAds.email) &&
-        Objects.equals(this.image, fullAds.image) &&
-        Objects.equals(this.phone, fullAds.phone) &&
-        Objects.equals(this.pk, fullAds.pk) &&
-        Objects.equals(this.price, fullAds.price) &&
-        Objects.equals(this.title, fullAds.title);
+    FullAdDto fullAdsDto = (FullAdDto) o;
+    return Objects.equals(this.authorFirstName, fullAdsDto.authorFirstName) &&
+        Objects.equals(this.authorLastName, fullAdsDto.authorLastName) &&
+        Objects.equals(this.description, fullAdsDto.description) &&
+        Objects.equals(this.email, fullAdsDto.email) &&
+        Objects.equals(this.image, fullAdsDto.image) &&
+        Objects.equals(this.phone, fullAdsDto.phone) &&
+        Objects.equals(this.pk, fullAdsDto.pk) &&
+        Objects.equals(this.price, fullAdsDto.price) &&
+        Objects.equals(this.title, fullAdsDto.title);
   }
 
   @Override
@@ -252,7 +252,7 @@ public class FullAds   {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class FullAds {\n");
+    sb.append("class FullAdDto {\n");
     
     sb.append("    authorFirstName: ").append(toIndentedString(authorFirstName)).append("\n");
     sb.append("    authorLastName: ").append(toIndentedString(authorLastName)).append("\n");
