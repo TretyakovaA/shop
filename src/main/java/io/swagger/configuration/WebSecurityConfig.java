@@ -1,17 +1,70 @@
 package io.swagger.configuration;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+
+import javax.sql.DataSource;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
-@Configuration
-public class WebSecurityConfig {
+@EnableWebSecurity(debug = true)
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+    @Autowired
+    private DataSource dataSource;
+
+//    @Bean
+//    public PasswordEncoder passwordEncoder() {
+//
+//        return NoOpPasswordEncoder.getInstance();
+//    }
+
+    @Override
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.jdbcAuthentication()
+                .dataSource(dataSource)
+                .usersByUsernameQuery(
+                        "select username, password, 'true' from users " +
+                                "where username=?")
+                .authoritiesByUsernameQuery(
+                        "select username, role from users " +
+                                "where username=?");
+    }
+
+//    @Bean
+//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+//        http
+//                .csrf().disable()
+//                .authorizeHttpRequests((authz) ->
+//                        authz
+//                                .mvcMatchers(AUTH_WHITELIST).permitAll()
+////                                .mvcMatchers("/ads/**", "/users/**").authenticated()
+//
+//                )
+//                .cors().disable()
+//                .httpBasic(withDefaults());
+//        return http.build();
+//    }
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+                .csrf().disable()
+                .authorizeHttpRequests((authz) ->
+                                authz
+                                    //    .mvcMatchers(AUTH_WHITELIST).permitAll()
+                                .mvcMatchers("/ads/**", "/users/**").authenticated()
+                )
+//                для примера как привязать роли при проверке
+//                .antMatchers("/user/**").hasAnyRole("USER", "ADMIN")
+//                .antMatchers("/admin/**").hasRole("ADMIN")
+                //конец примера
+                .cors().disable()
+                .httpBasic(withDefaults());
+
+    }
 
     private static final String[] AUTH_WHITELIST = {
             "/swagger-resources/**",
@@ -25,30 +78,16 @@ public class WebSecurityConfig {
             "/ads/**"
     };
 
-    @Bean
-    public InMemoryUserDetailsManager userDetailsService() {
-        UserDetails user = User.withDefaultPasswordEncoder()
-                .username("user@gmail.com")
-                .password("password")
-                .roles("USER")
-                .build();
-        return new InMemoryUserDetailsManager(user);
-    }
-
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf().disable()
-                .authorizeHttpRequests((authz) ->
-                        authz
-                                .mvcMatchers(AUTH_WHITELIST).permitAll()
-//                                .mvcMatchers("/ads/**", "/users/**").authenticated()
-
-                )
-                .cors().disable()
-                .httpBasic(withDefaults());
-        return http.build();
-    }
+    //была такая авторизация
+//    @Bean
+//    public InMemoryUserDetailsManager userDetailsService() {
+//        UserDetails user = User.withDefaultPasswordEncoder()
+//                .username("user@gmail.com")
+//                .password("password")
+//                .roles("USER")
+//                .build();
+//        return new InMemoryUserDetailsManager(user);
+//    }
 
 
 }
