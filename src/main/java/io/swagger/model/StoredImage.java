@@ -20,8 +20,9 @@ public class StoredImage {
     @Column(name = "path")
     private String path;
 
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.EAGER)
     @JoinColumn(name = "ad_id")
+    @ToString.Exclude
     private Ad ad;
 
     public StoredImage(String path) {

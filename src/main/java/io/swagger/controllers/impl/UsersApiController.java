@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,39 +41,22 @@ public class UsersApiController implements UsersApi {
     }
 
     public ResponseEntity<UserDto> getUser1(Integer id) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            return ResponseEntity.ok(userService.getUser(id));
-             }
-
-        return new ResponseEntity<UserDto>(HttpStatus.NOT_IMPLEMENTED);
+        return ResponseEntity.ok(userService.getUser(id));
     }
 
-    public ResponseEntity<NewPasswordDto> setPassword(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true,
-            schema=@Schema()) @Valid @RequestBody NewPasswordDto body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            return ResponseEntity.ok(userService.setPassword(body));
-           }
-
-        return new ResponseEntity<NewPasswordDto>(HttpStatus.NOT_IMPLEMENTED);
+    public ResponseEntity<NewPasswordDto> setPassword(@Parameter(in = ParameterIn.DEFAULT, description = "", required = true,
+            schema = @Schema()) @Valid @RequestBody NewPasswordDto body) {
+        return ResponseEntity.ok(userService.setPassword(body));
     }
 
-    public ResponseEntity<UserDto> updateUser(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true,
-            schema=@Schema()) @Valid @RequestBody UserDto body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            return ResponseEntity.ok(userService.updateUser(body));
-            }
-
-        return new ResponseEntity<UserDto>(HttpStatus.NOT_IMPLEMENTED);
+    public ResponseEntity<UserDto> updateUser(@Parameter(in = ParameterIn.DEFAULT, description = "", required = true,
+            schema = @Schema()) @Valid @RequestBody UserDto body) {
+        return ResponseEntity.ok(userService.updateUser(body));
     }
 
     public ResponseEntity<Void> updateUserImage(@Parameter(description = "file detail")
                                                 @Valid @RequestPart("file") MultipartFile image) {
-        String accept = request.getHeader("Accept");
         return ResponseEntity.ok(userService.updateUserImage(image));
-        //return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
     }
 
 }

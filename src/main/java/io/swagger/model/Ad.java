@@ -2,6 +2,7 @@ package io.swagger.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.List;
@@ -26,15 +27,18 @@ public class Ad {
     private Integer price;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "ad")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "ad")
+    @ToString.Exclude
     private List<StoredImage> storedImage;
 
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.EAGER)
     @JoinColumn(name = "author_id")
+    @ToString.Exclude
     private User author;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "ad")
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "ad")
+    @ToString.Exclude
     List<Comment> comments;
 
     @Override

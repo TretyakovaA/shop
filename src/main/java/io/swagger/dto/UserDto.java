@@ -200,19 +200,12 @@ public class UserDto {
       return false;
     }
     UserDto userDto = (UserDto) o;
-    return Objects.equals(this.email, userDto.email) &&
-        Objects.equals(this.firstName, userDto.firstName) &&
-        Objects.equals(this.id, userDto.id) &&
-        Objects.equals(this.lastName, userDto.lastName) &&
-        Objects.equals(this.phone, userDto.phone) &&
-        Objects.equals(this.regDate, userDto.regDate) &&
-        Objects.equals(this.city, userDto.city) &&
-        Objects.equals(this.image, userDto.image);
+    return Objects.equals(this.id, userDto.id);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(email, firstName, id, lastName, phone, regDate, city, image);
+    return Objects.hash(id);
   }
 
   @Override

@@ -1,6 +1,7 @@
 package io.swagger.model;
 
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -18,15 +19,17 @@ public class Comment {
     @Column(name = "text")
     private String text;
 
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.EAGER)
     @JoinColumn(name = "author_id")
+    @ToString.Exclude
     private User author;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.EAGER)
     @JoinColumn(name = "ad_id")
+    @ToString.Exclude
     private Ad ad;
 
     @Override

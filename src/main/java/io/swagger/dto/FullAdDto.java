@@ -1,12 +1,13 @@
 package io.swagger.dto;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
+import java.util.Objects;
 
 /**
  * FullAdDto
@@ -233,20 +234,12 @@ public class FullAdDto {
       return false;
     }
     FullAdDto fullAdsDto = (FullAdDto) o;
-    return Objects.equals(this.authorFirstName, fullAdsDto.authorFirstName) &&
-        Objects.equals(this.authorLastName, fullAdsDto.authorLastName) &&
-        Objects.equals(this.description, fullAdsDto.description) &&
-        Objects.equals(this.email, fullAdsDto.email) &&
-        Objects.equals(this.image, fullAdsDto.image) &&
-        Objects.equals(this.phone, fullAdsDto.phone) &&
-        Objects.equals(this.pk, fullAdsDto.pk) &&
-        Objects.equals(this.price, fullAdsDto.price) &&
-        Objects.equals(this.title, fullAdsDto.title);
+    return Objects.equals(this.pk, fullAdsDto.pk);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(authorFirstName, authorLastName, description, email, image, phone, pk, price, title);
+    return Objects.hash(pk);
   }
 
   @Override

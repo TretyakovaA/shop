@@ -3,6 +3,7 @@ package io.swagger.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.dto.RoleEnum;
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.List;
@@ -48,11 +49,13 @@ public class User {
     private RoleEnum role;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "author")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "author")
+    @ToString.Exclude
     List<Ad> ads;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "author")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "author")
+    @ToString.Exclude
     List<Comment> comments;
 
     @Override

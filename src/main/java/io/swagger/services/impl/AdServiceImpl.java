@@ -176,7 +176,7 @@ public class AdServiceImpl implements AdService {
         oldAd.setPrice(body.getPrice());
         oldAd.setDescription(body.getDescription());
         oldAd.setTitle(body.getTitle());
-        return adDtoMapper.toDto(oldAd);
+        return adDtoMapper.toDto(adRepository.save(oldAd));
     }
 
     @Override
@@ -184,6 +184,6 @@ public class AdServiceImpl implements AdService {
         Comment oldComment = commentRepository.findById(id).orElseThrow(()
                 -> { throw new CommentNotFoundException(id);});
         oldComment.setText(body.getText());
-        return commentDtoMapper.toDto(oldComment);
+        return commentDtoMapper.toDto(commentRepository.save(oldComment));
     }
 }

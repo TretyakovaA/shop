@@ -1,9 +1,10 @@
 package io.swagger.dto;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
+
+import java.util.Objects;
 
 /**
  * CommentDto
@@ -111,15 +112,12 @@ public class CommentDto {
       return false;
     }
     CommentDto commentDto = (CommentDto) o;
-    return Objects.equals(this.author, commentDto.author) &&
-        Objects.equals(this.createdAt, commentDto.createdAt) &&
-        Objects.equals(this.pk, commentDto.pk) &&
-        Objects.equals(this.text, commentDto.text);
+    return Objects.equals(this.pk, commentDto.pk);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(author, createdAt, pk, text);
+    return Objects.hash(pk);
   }
 
   @Override
