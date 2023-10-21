@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-08-23T14:28:14.858562274Z[GMT]")
@@ -40,7 +41,7 @@ public interface ImageApi {
         method = RequestMethod.PATCH)
     ResponseEntity<List<byte[]>> updateImage(@Parameter(in = ParameterIn.PATH, description = "", required=true,
             schema=@Schema()) @PathVariable("id") Integer id, @Parameter(description = "file detail")
-    @Valid @RequestPart("file") MultipartFile image);
+    @Valid @RequestPart("file") MultipartFile image) throws IOException;
 
 }
 

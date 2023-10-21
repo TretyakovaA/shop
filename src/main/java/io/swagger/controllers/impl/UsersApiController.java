@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -19,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.IOException;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-08-23T14:28:14.858562274Z[GMT]")
 @RestController
@@ -39,23 +41,27 @@ public class UsersApiController implements UsersApi {
         this.request = request;
         this.userService = userService;
     }
-
+    @PreAuthorize("(hasRole('USER') or hasRole('ADMIN')) and (#username == authentication.principal.username)")
     public ResponseEntity<UserDto> getUser1(Integer id) {
+
         return ResponseEntity.ok(userService.getUser(id));
     }
 
+    @PreAuthorize("(hasRole('USER') or hasRole('ADMIN')) and (#username == authentication.principal.username)")
     public ResponseEntity<NewPasswordDto> setPassword(@Parameter(in = ParameterIn.DEFAULT, description = "", required = true,
             schema = @Schema()) @Valid @RequestBody NewPasswordDto body) {
         return ResponseEntity.ok(userService.setPassword(body));
     }
 
+    @PreAuthorize("(hasRole('USER') or hasRole('ADMIN')) and (#username == authentication.principal.username)")
     public ResponseEntity<UserDto> updateUser(@Parameter(in = ParameterIn.DEFAULT, description = "", required = true,
             schema = @Schema()) @Valid @RequestBody UserDto body) {
         return ResponseEntity.ok(userService.updateUser(body));
     }
 
-    public ResponseEntity<Void> updateUserImage(@Parameter(description = "file detail")
-                                                @Valid @RequestPart("file") MultipartFile image) {
+    @PreAuthorize("(hasRole('USER') or hasRole('ADMIN')) and (#username == authentication.principal.username) ")
+    public ResponseEntity<UserDto> updateUserImage(@Parameter(description = "file detail")
+                                                @Valid @RequestPart("file") MultipartFile image) throws IOException {
         return ResponseEntity.ok(userService.updateUserImage(image));
     }
 

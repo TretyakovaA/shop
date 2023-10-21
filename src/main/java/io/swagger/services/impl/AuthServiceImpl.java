@@ -36,8 +36,9 @@ public class AuthServiceImpl implements AuthService {
         }
 
         String encryptedPassword = user.getPassword();
-        String encryptedPasswordWithoutEncryptionType = encryptedPassword.substring(8);
-        return encoder.matches(password, encryptedPasswordWithoutEncryptionType);
+        String encryptedPasswordWithoutEncryptionType = encryptedPassword; //.substring(8);
+        //return encoder.matches(password, encryptedPasswordWithoutEncryptionType);
+        return encryptedPassword.equals(encryptedPasswordWithoutEncryptionType);
 
 //        if (!manager.userExists(userName)) {
 //            return false;
@@ -50,7 +51,12 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public boolean register(RegisterReqDto registerReqDto, RoleEnum roleEnum) {
-        User user = userRepository.findByUsername(registerReqDto.getUsername()).get();
+        User user = null;
+        try {
+             user = userRepository.findByUsername(registerReqDto.getUsername()).orElseThrow();
+        } catch (RuntimeException e){
+        }
+
         if (user != null) {
             throw new RuntimeException("Пользователь с таким логином уже есть в базе");
         }

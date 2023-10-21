@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 @RestController
+@CrossOrigin(value = "http://localhost:3000")
 public class FilesController {
     private final ImageService imageService;
 

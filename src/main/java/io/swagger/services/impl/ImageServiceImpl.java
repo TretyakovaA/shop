@@ -1,5 +1,9 @@
 package io.swagger.services.impl;
 
+import io.swagger.exceptions.AdNotFoundException;
+import io.swagger.model.Ad;
+import io.swagger.model.StoredImage;
+import io.swagger.repository.AdRepository;
 import io.swagger.repository.StoredImageRepository;
 import io.swagger.services.api.ImageService;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +18,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
@@ -22,9 +29,11 @@ public class ImageServiceImpl implements ImageService {
     private final StoredImageRepository storedImageRepository;
     @Value("${path.to.files.folder}")
     private String filesDir;
+    private final AdRepository adRepository;
 
-    public ImageServiceImpl(StoredImageRepository storedImageRepository) {
+    public ImageServiceImpl(StoredImageRepository storedImageRepository, AdRepository adRepository) {
         this.storedImageRepository = storedImageRepository;
+        this.adRepository = adRepository;
     }
 
     @Override
@@ -72,5 +81,17 @@ public class ImageServiceImpl implements ImageService {
             response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + name);
             is.transferTo(os);
         }*/
+    }
+
+    @Override
+    public List<byte[]> updateImage(Integer id, MultipartFile image) throws IOException {
+        Path path = uploadFile(image);
+        Ad ad = adRepository.findById(id).orElseThrow(()
+                -> { throw new AdNotFoundException(id);});
+        StoredImage storedImage = new StoredImage();
+        storedImage.setPath(path.toString());
+        storedImage = storedImageRepository.save(storedImage);
+        ad.setStoredImage(Arrays.asList(storedImage));
+        return Collections.singletonList(image.getBytes());
     }
 }

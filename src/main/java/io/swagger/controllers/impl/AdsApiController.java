@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,12 +38,14 @@ public class AdsApiController implements AdsApi {
         this.adService = adService;
     }
 
+    @PreAuthorize("(hasRole('USER') or hasRole('ADMIN')) and (#username == authentication.principal.username)")
     public ResponseEntity<AdDto> addAds(@Parameter(in = ParameterIn.DEFAULT, description = "",
             schema = @Schema()) @RequestParam(value = "properties", required = false) CreateAdDto properties,
                                         @Parameter(description = "file detail") @Valid @RequestPart("file") MultipartFile image) {
         return ResponseEntity.ok(adService.addAds(properties, image));
     }
 
+    @PreAuthorize("(hasRole('USER') or hasRole('ADMIN')) and (#username == authentication.principal.username)")
     public ResponseEntity<CommentDto> addComments(@Parameter(in = ParameterIn.PATH, description = "", required = true,
             schema = @Schema()) @PathVariable("ad_pk") String adPk,
                                                   @Parameter(in = ParameterIn.DEFAULT, description = "", required = true,
@@ -50,6 +53,7 @@ public class AdsApiController implements AdsApi {
         return ResponseEntity.ok(adService.addComments(Integer.parseInt(adPk), body));
     }
 
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Void> deleteComments(@Parameter(in = ParameterIn.PATH, description = "", required = true,
             schema = @Schema()) @PathVariable("ad_pk") String adPk,
                                                @Parameter(in = ParameterIn.PATH, description = "", required = true,
@@ -60,7 +64,6 @@ public class AdsApiController implements AdsApi {
         } else {
             return new ResponseEntity<Void>(HttpStatus.OK);
         }
-
     }
 
     public ResponseEntity<ResponseWrapperAdDto> getALLAds() {
@@ -72,6 +75,7 @@ public class AdsApiController implements AdsApi {
         return ResponseEntity.ok(adService.getAds(id));
     }
 
+    @PreAuthorize("(hasRole('USER') or hasRole('ADMIN')) and (#username == authentication.principal.username)")
     public ResponseEntity<ResponseWrapperAdDto> getAdsMeUsingGET(@Parameter(in = ParameterIn.QUERY, description = "",
             schema = @Schema()) @Valid @RequestParam(value = "authenticated", required = false) Boolean authenticated,
                                                                  @Parameter(in = ParameterIn.QUERY, description = "",
@@ -102,6 +106,7 @@ public class AdsApiController implements AdsApi {
         return ResponseEntity.ok(adService.getComments1(Integer.parseInt(adPk), id));
     }
 
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Void> removeAds(@Parameter(in = ParameterIn.PATH, description = "", required = true,
             schema = @Schema()) @PathVariable("id") Integer id) {
         AdDto result = adService.removeAds(id);
@@ -112,6 +117,7 @@ public class AdsApiController implements AdsApi {
         }
     }
 
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<AdDto> updateAds(@Parameter(in = ParameterIn.PATH, description = "", required = true,
             schema = @Schema()) @PathVariable("id") Integer id,
                                            @Parameter(in = ParameterIn.DEFAULT, description = "", required = true,
@@ -119,6 +125,7 @@ public class AdsApiController implements AdsApi {
         return ResponseEntity.ok(adService.updateAds(id, body));
     }
 
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<CommentDto> updateComments(@Parameter(in = ParameterIn.PATH, description = "", required = true,
             schema = @Schema()) @PathVariable("ad_pk") String adPk,
                                                      @Parameter(in = ParameterIn.PATH, description = "", required = true,

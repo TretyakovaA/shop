@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-08-23T14:28:14.858562274Z[GMT]")
 @Validated
@@ -84,7 +85,7 @@ public interface UsersApi {
     @RequestMapping(value = "/users/me/image",
             consumes = {"multipart/form-data"},
             method = RequestMethod.PATCH)
-    ResponseEntity<Void> updateUserImage(@Parameter(description = "file detail") @Valid @RequestPart("file") MultipartFile image);
+    ResponseEntity<UserDto> updateUserImage(@Parameter(description = "file detail") @Valid @RequestPart("file") MultipartFile image) throws IOException;
 
 }
 

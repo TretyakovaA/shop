@@ -10,7 +10,8 @@ import javax.sql.DataSource;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity
+     //   (debug = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private DataSource dataSource;
@@ -54,8 +55,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeHttpRequests((authz) ->
                                 authz
-                                       .mvcMatchers(AUTH_WHITELIST).permitAll()
-                                //.mvcMatchers("/ads/**", "/users/**").authenticated()
+                                .mvcMatchers(AUTH_WHITELIST).permitAll()
+                                .mvcMatchers("/ads/**", "/users/**").authenticated()
                 )
 //                для примера как привязать роли при проверке
 //                .antMatchers("/user/**").hasAnyRole("USER", "ADMIN")
@@ -72,10 +73,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "/v3/api-docs",
             "/webjars/**",
             "/login", "/register",
-            "/users/**",
-            "/image/**",
+            //"/users/**",
+            //"/users/me",
+            //"/image/**",
             "/ads",
-            "/ads/**"
+            //"/ads/**"
     };
 
     //была такая авторизация

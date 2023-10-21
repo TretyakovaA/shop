@@ -173,9 +173,15 @@ public class AdServiceImpl implements AdService {
     public AdDto updateAds(Integer id, CreateAdDto body) {
         Ad oldAd = adRepository.findById(id).orElseThrow(()
                 -> { throw new AdNotFoundException(id);});
-        oldAd.setPrice(body.getPrice());
-        oldAd.setDescription(body.getDescription());
-        oldAd.setTitle(body.getTitle());
+        if (body.getPrice() != 0) {
+            oldAd.setPrice(body.getPrice());
+        }
+        if (body.getDescription() != null){
+            oldAd.setDescription(body.getDescription());
+        }
+        if (body.getTitle() != null) {
+            oldAd.setTitle(body.getTitle());
+        }
         return adDtoMapper.toDto(adRepository.save(oldAd));
     }
 
@@ -183,7 +189,9 @@ public class AdServiceImpl implements AdService {
     public CommentDto updateComments(Integer adPk, Integer id, CommentDto body) {
         Comment oldComment = commentRepository.findById(id).orElseThrow(()
                 -> { throw new CommentNotFoundException(id);});
-        oldComment.setText(body.getText());
+        if (body.getText() != null){
+            oldComment.setText(body.getText());
+        }
         return commentDtoMapper.toDto(commentRepository.save(oldComment));
     }
 }
