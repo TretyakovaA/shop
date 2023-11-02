@@ -32,6 +32,17 @@ public class Comment {
     @ToString.Exclude
     private Ad ad;
 
+    public Comment() {
+    }
+
+    public Comment(Integer pk, String text, User author, LocalDateTime createdAt, Ad ad) {
+        this.pk = pk;
+        this.text = text;
+        this.author = author;
+        this.createdAt = createdAt;
+        this.ad = ad;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
@@ -18,7 +19,7 @@ public class CommentDto {
   private Integer author = null;
 
   @JsonProperty("createdAt")
-  private String createdAt = null;
+  private LocalDateTime createdAt = null;
 
   @JsonProperty("pk")
   private Integer pk = null;
@@ -26,9 +27,19 @@ public class CommentDto {
   @JsonProperty("text")
   private String text = null;
 
+  public CommentDto() {
+  }
+
   public CommentDto author(Integer author) {
     this.author = author;
     return this;
+  }
+
+  public CommentDto(Integer author, LocalDateTime createdAt, Integer pk, String text) {
+    this.author = author;
+    this.createdAt = createdAt;
+    this.pk = pk;
+    this.text = text;
   }
 
   /**
@@ -45,7 +56,7 @@ public class CommentDto {
     this.author = author;
   }
 
-  public CommentDto createdAt(String createdAt) {
+  public CommentDto createdAt(LocalDateTime createdAt) {
     this.createdAt = createdAt;
     return this;
   }
@@ -56,11 +67,11 @@ public class CommentDto {
    **/
   @Schema(description = "")
   
-    public String getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(String createdAt) {
+  public void setCreatedAt(LocalDateTime createdAt) {
     this.createdAt = createdAt;
   }
 

@@ -1,9 +1,10 @@
 package io.shop.dto;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
+
+import java.util.Objects;
 
 /**
  * NewPasswordDto
@@ -19,9 +20,17 @@ public class NewPasswordDto {
   @JsonProperty("newPassword")
   private String newPassword = null;
 
+  public NewPasswordDto() {
+  }
+
   public NewPasswordDto currentPassword(String currentPassword) {
     this.currentPassword = currentPassword;
     return this;
+  }
+
+  public NewPasswordDto(String currentPassword, String newPassword) {
+    this.currentPassword = currentPassword;
+    this.newPassword = newPassword;
   }
 
   /**

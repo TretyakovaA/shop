@@ -1,12 +1,13 @@
 package io.shop.dto;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
+import java.util.Objects;
 
 /**
  * ResponseWrapperCommentDto
@@ -23,9 +24,17 @@ public class ResponseWrapperCommentDto {
   @Valid
   private List<CommentDto> results = null;
 
+  public ResponseWrapperCommentDto() {
+  }
+
   public ResponseWrapperCommentDto count(Integer count) {
     this.count = count;
     return this;
+  }
+
+  public ResponseWrapperCommentDto(Integer count, List<CommentDto> results) {
+    this.count = count;
+    this.results = results;
   }
 
   /**

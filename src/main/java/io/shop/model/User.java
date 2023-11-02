@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 @Entity
@@ -36,7 +37,7 @@ public class User {
     private String image;
 
     @Column(name = "reg_date")
-    private String regDate;
+    private LocalDateTime regDate;
 
     @Column(name = "password")
     private String password;
@@ -57,6 +58,24 @@ public class User {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "author")
     @ToString.Exclude
     List<Comment> comments;
+
+    public User(Integer id, String lastName, String firstName, String phone, String email, String city, String image,
+                LocalDateTime regDate, String password, String username, RoleEnum role) {
+        this.id = id;
+        this.lastName = lastName;
+        this.firstName = firstName;
+        this.phone = phone;
+        this.email = email;
+        this.city = city;
+        this.image = image;
+        this.regDate = regDate;
+        this.password = password;
+        this.username = username;
+        this.role = role;
+    }
+
+    public User() {
+    }
 
     @Override
     public boolean equals(Object o) {

@@ -23,9 +23,17 @@ public class AdBodyDto {
   @JsonProperty("image")
   private StoredImage storedImage = null;
 
+  public AdBodyDto() {
+  }
+
   public AdBodyDto properties(CreateAdDto properties) {
     this.properties = properties;
     return this;
+  }
+
+  public AdBodyDto(CreateAdDto properties, StoredImage storedImage) {
+    this.properties = properties;
+    this.storedImage = storedImage;
   }
 
   /**

@@ -24,9 +24,17 @@ public class ResponseWrapperAdDto {
   @Valid
   private List<AdDto> results = null;
 
+  public ResponseWrapperAdDto() {
+  }
+
   public ResponseWrapperAdDto count(Integer count) {
     this.count = count;
     return this;
+  }
+
+  public ResponseWrapperAdDto(Integer count, List<AdDto> results) {
+    this.count = count;
+    this.results = results;
   }
 
   /**

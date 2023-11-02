@@ -1,9 +1,10 @@
 package io.shop.dto;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
+
+import java.util.Objects;
 
 /**
  * RegisterReqDto
@@ -32,9 +33,21 @@ public class RegisterReqDto {
   @JsonProperty("role")
   private RoleEnum role = null;
 
+  public RegisterReqDto() {
+  }
+
   public RegisterReqDto username(String username) {
     this.username = username;
     return this;
+  }
+
+  public RegisterReqDto(String username, String password, String firstName, String lastName, String phone, RoleEnum role) {
+    this.username = username;
+    this.password = password;
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.phone = phone;
+    this.role = role;
   }
 
   /**

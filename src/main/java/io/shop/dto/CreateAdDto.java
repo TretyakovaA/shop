@@ -24,9 +24,18 @@ public class CreateAdDto {
   @JsonProperty("title")
   private String title = null;
 
+  public CreateAdDto() {
+  }
+
   public CreateAdDto description(String description) {
     this.description = description;
     return this;
+  }
+
+  public CreateAdDto(String description, Integer price, String title) {
+    this.description = description;
+    this.price = price;
+    this.title = title;
   }
 
   /**

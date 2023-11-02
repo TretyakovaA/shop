@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
@@ -30,7 +31,7 @@ public class UserDto {
   private String phone = null;
 
   @JsonProperty("regDate")
-  private String regDate = null;
+  private LocalDateTime regDate = null;
 
   @JsonProperty("city")
   private String city = null;
@@ -41,6 +42,17 @@ public class UserDto {
   public UserDto email(String email) {
     this.email = email;
     return this;
+  }
+
+  public UserDto(String email, String firstName, Integer id, String lastName, String phone, LocalDateTime regDate, String city, String image) {
+    this.email = email;
+    this.firstName = firstName;
+    this.id = id;
+    this.lastName = lastName;
+    this.phone = phone;
+    this.regDate = regDate;
+    this.city = city;
+    this.image = image;
   }
 
   /**
@@ -133,7 +145,7 @@ public class UserDto {
     this.phone = phone;
   }
 
-  public UserDto regDate(String regDate) {
+  public UserDto regDate(LocalDateTime regDate) {
     this.regDate = regDate;
     return this;
   }
@@ -144,17 +156,20 @@ public class UserDto {
    **/
   @Schema(description = "")
   
-    public String getRegDate() {
+    public LocalDateTime getRegDate() {
     return regDate;
   }
 
-  public void setRegDate(String regDate) {
+  public void setRegDate(LocalDateTime regDate) {
     this.regDate = regDate;
   }
 
   public UserDto city(String city) {
     this.city = city;
     return this;
+  }
+
+  public UserDto() {
   }
 
   /**
