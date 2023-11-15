@@ -1,5 +1,6 @@
 package io.shop.services.impl;
 
+import io.shop.exceptions.UserNotFoundException;
 import io.shop.services.api.AuthService;
 import io.shop.dto.RegisterReqDto;
 import io.shop.dto.RoleEnum;
@@ -30,10 +31,11 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public boolean login(String userName, String password) {
-        User user = userRepository.findByUsername(userName).get();
-        if (user == null) {
-            throw new RuntimeException("Пользователя с таким логином нет в базе");
-        }
+        User user = userRepository.findByUsername(userName).orElseThrow(
+                () -> {
+                    throw new UserNotFoundException("Пользователя с таким логином нет в базе");
+                }
+        );
 
         String encryptedPassword = user.getPassword();
         String encryptedPasswordWithoutEncryptionType = encryptedPassword; //.substring(8);
@@ -53,13 +55,14 @@ public class AuthServiceImpl implements AuthService {
     public boolean register(RegisterReqDto registerReqDto, RoleEnum roleEnum) {
         User user = null;
         try {
-             user = userRepository.findByUsername(registerReqDto.getUsername()).orElseThrow();
+            user = userRepository.findByUsername(registerReqDto.getUsername()).orElseThrow();
         } catch (RuntimeException e){
         }
 
         if (user != null) {
             throw new RuntimeException("Пользователь с таким логином уже есть в базе");
         }
+
 
         user = registerReqDtoMapper.toEntity(registerReqDto);
         user.setRole(roleEnum);

@@ -44,12 +44,13 @@ public class Ad {
     public Ad() {
     }
 
-    public Ad(Integer pk, String title, String description, Integer price, User author) {
+    public Ad(Integer pk, String title, String description, Integer price, User author, List<Comment> comments) {
         this.pk = pk;
         this.title = title;
         this.description = description;
         this.price = price;
         this.author = author;
+        this.comments = comments;
     }
 
     @Override

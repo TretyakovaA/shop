@@ -7,15 +7,19 @@ import io.shop.model.User;
 import io.shop.repository.UserRepository;
 import io.shop.services.impl.UserServiceImpl;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.security.core.Authentication;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 
-@WebMvcTest(controllers = UsersApiController.class)
+@AutoConfigureMockMvc
+@SpringBootTest
 class UsersApiControllerTest {
 
     @Autowired
@@ -32,6 +36,9 @@ class UsersApiControllerTest {
 
     @SpyBean
     private UserDtoMapper userDtoMapper;
+
+    @Mock
+    private Authentication auth;
 
     public User resultUser() {
         User user = new User();
@@ -51,8 +58,45 @@ class UsersApiControllerTest {
         return user;
     }
 
+  /*  @WithMockUser(username = USERNAME_1)
     @Test
-    void getUser1() {
+    void getUser1() throws Exception {
+        Integer id = 1;
+        String password = "password";
+        String firstName = "Timofei";
+        String lastName = "Timofeev";
+        String city = "Moscow";
+        String email = "timofeev@gmail.com";
+        String phone = "+12345678";
+        LocalDateTime regDate = LocalDateTime.parse("2023-10-01T12:00:00.00000");
+        RoleEnum role = RoleEnum.USER;
+        String userName = "timofeev@gmail.com";
+
+        String jsonResult = objectMapper.writeValueAsString(userDtoMapper.toDto(resultUser()));
+
+        User foundUser = new User();
+        foundUser.setId(id);
+        foundUser.setUsername(userName);
+        foundUser.setEmail(email);
+        foundUser.setPhone(phone);
+        foundUser.setRole(role);
+        foundUser.setCity(city);
+        foundUser.setComments(null);
+        foundUser.setAds(null);
+        foundUser.setPassword(password);
+        foundUser.setLastName(lastName);
+        foundUser.setFirstName(firstName);
+        foundUser.setRegDate(regDate);
+        foundUser.setImage(null);
+
+        when(userRepository.findById(any(Integer.class))).thenReturn(Optional.of(foundUser));
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/users/me/" + id)
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().json(jsonResult));
+
 //        long id = 1L;
 //        String name = "Valya";
 //        String address = "г. Москва, Таймырская ул., д.6";
@@ -72,6 +116,7 @@ class UsersApiControllerTest {
 //                .andExpect(status().isOk())
 //                .andExpect(content().json(jsonResult));
     }
+   */
 
     @Test
     void setPassword() {

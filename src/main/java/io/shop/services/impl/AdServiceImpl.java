@@ -82,7 +82,10 @@ public class AdServiceImpl implements AdService {
     @Override
     public CommentDto addComments(Integer adPk, CommentDto body) {
         Comment comment = commentDtoMapper.toEntity(body);
-        comment.setAd(adRepository.findById(adPk).orElseThrow());
+        comment.setAd(adRepository.findById(adPk).orElseThrow(() -> {
+            logger.info("Объявление с id " + adPk + " не найден");
+            throw new AdNotFoundException(adPk);
+        }));
         logger.info("Комментарий добавлен: " + comment.getPk());
         return commentDtoMapper.toDto(commentRepository.save(comment));
     }

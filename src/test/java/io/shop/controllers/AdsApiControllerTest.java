@@ -8,18 +8,20 @@ import io.shop.model.Comment;
 import io.shop.model.User;
 import io.shop.repository.AdRepository;
 import io.shop.repository.CommentRepository;
+import io.shop.services.api.ImageService;
 import io.shop.services.impl.AdServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
-@WebMvcTest(controllers = AdsApiController.class)
+@AutoConfigureMockMvc
+@SpringBootTest
 class AdsApiControllerTest {
 
     @Autowired
@@ -47,7 +49,7 @@ class AdsApiControllerTest {
     private CommentDtoMapper commentDtoMapper;
 
     @SpyBean
-    private CreateAdDtoMapper createDtoMapper;
+    private CreateAdDtoMapper createAdDtoMapper;
 
     @SpyBean
     private FullAdDtoMapper fullAdDtoMapper;
@@ -57,6 +59,9 @@ class AdsApiControllerTest {
 
     @SpyBean
     private ResponseWrapperCommentDtoMapper responseWrapperCommentDtoMapper;
+
+    @SpyBean
+    private ImageService imageService;
 
     public Comment resultComment() {
         Comment comment = new Comment();
@@ -107,9 +112,48 @@ class AdsApiControllerTest {
         return user;
     }
 
-    @Test
-    void addAds() {
+    /*@Test
+    void addAds() throws Exception {
+//        String description = "Описание объявления";
+//        Integer price = 1000;
+//        String title = "Заголовок объявления";
+//
+//        CreateAdDto addedAdDto = new CreateAdDto();
+//        addedAdDto.setDescription(description);
+//        addedAdDto.setPrice(price);
+//        addedAdDto.setTitle(title);
+//
+//        Ad addedAd = new Ad();
+//        addedAd.setStoredImage();
+//        addedAd.setDescription();
+//        addedAd.setPk();
+//        addedAd.setTitle();
+//        addedAd.setPrice();
+//        addedAd.setAuthor();
+//        addedAd.setComments();
+
+        String jsonResult = objectMapper.writeValueAsString(adDtoMapper.toDto(resultAd()));
+
+//        CreateAdDto newAdDto = new CreateAdDto();
+//        newAdDto.setDescription(description);
+//        newAdDto.setPrice(price);
+//        newAdDto.setTitle(title);
+
+        when(createAdDtoMapper.toEntity(CREATE_AD_DTO_1)).thenReturn(AD_1);
+        when(adRepository.save(any(Ad.class))).thenReturn((AD_1));
+        when(imageService.uploadFile(any())).thenReturn(null);
+        when(adDtoMapper.toDto(AD_1)).thenReturn(AD_DTO_1);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post("/ads") //посылаем
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(CREATE_AD_DTO_1))
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().json(jsonResult));
     }
+
+     */
 
     @Test
     void addComments() {

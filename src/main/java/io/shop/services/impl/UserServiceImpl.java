@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(auth.getName()).orElseThrow(()
                 -> {
-            throw new RuntimeException("Пользователь с именем "+ auth.getName()+" не найден в базе");});
+            throw new UserNotFoundException("Пользователь с именем "+ auth.getName()+" не найден в базе");});
         if (user.getPassword().equals(body.getCurrentPassword())) {
             user.setPassword(body.getNewPassword());
             userRepository.save(user);
@@ -93,7 +93,7 @@ public class UserServiceImpl implements UserService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(auth.getName()).orElseThrow(()
                 -> {
-            throw new RuntimeException("Пользователь с именем "+ auth.getName()+" не найден в базе");});
+            throw new UserNotFoundException("Пользователь с именем "+ auth.getName()+" не найден в базе");});
         Path path = imageService.uploadFile(image);
         user.setImage(path.toString());
         userRepository.save(user);
