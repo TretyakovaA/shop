@@ -34,7 +34,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getUser(Integer id) {
+    public UserDto getUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findByUsername(auth.getName()).orElseThrow(()
+                -> {
+            throw new UserNotFoundException("Пользователь с именем "+ auth.getName()+" не найден в базе");});
+        Integer id = user.getId();
+
         User foundUser = userRepository.findById(id).orElseThrow(() -> {
             logger.info("Пользователь с id " + id + " не найден");
             throw new UserNotFoundException(id);

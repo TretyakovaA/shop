@@ -53,7 +53,7 @@ public class AdsApiController  {
             produces = {"*/*"},
             consumes = {"multipart/form-data"},
             method = RequestMethod.POST)
-   // @PreAuthorize("(hasRole('USER') or hasRole('ADMIN')) and (#username == authentication.principal.username)")
+    @PreAuthorize("(hasRole('USER') or hasRole('ADMIN')) and (#username == authentication.principal.username)")
     public ResponseEntity<AdDto> addAds(@Parameter(in = ParameterIn.DEFAULT, description = "",
             schema = @Schema()) @RequestParam(value = "properties", required = false) CreateAdDto properties,
                                         @Parameter(description = "file detail") @Valid @RequestPart("file") MultipartFile image) {
@@ -70,7 +70,7 @@ public class AdsApiController  {
             produces = {"application/json"},
             consumes = {"application/json"},
             method = RequestMethod.POST)
-//    @PreAuthorize("(hasRole('USER') or hasRole('ADMIN')) and (#username == authentication.principal.username)")
+    @PreAuthorize("(hasRole('USER') or hasRole('ADMIN')) and (#username == authentication.principal.username)")
     public ResponseEntity<CommentDto> addComments(@Parameter(in = ParameterIn.PATH, description = "", required = true,
             schema = @Schema()) @PathVariable("ad_pk") String adPk,
                                                   @Parameter(in = ParameterIn.DEFAULT, description = "", required = true,
@@ -86,7 +86,7 @@ public class AdsApiController  {
             @ApiResponse(responseCode = "404", description = "Not Found")})
     @RequestMapping(value = "/ads/{ad_pk}/comments/{id}",
             method = RequestMethod.DELETE)
-//    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Void> deleteComments(@Parameter(in = ParameterIn.PATH, description = "", required = true,
             schema = @Schema()) @PathVariable("ad_pk") String adPk,
                                                @Parameter(in = ParameterIn.PATH, description = "", required = true,
@@ -133,7 +133,7 @@ public class AdsApiController  {
     @RequestMapping(value = "/ads/me",
             produces = {"application/json"},
             method = RequestMethod.GET)
-//    @PreAuthorize("(hasRole('USER') or hasRole('ADMIN')) and (#username == authentication.principal.username)")
+    @PreAuthorize("(hasRole('USER') or hasRole('ADMIN')) and (#username == authentication.principal.username)")
     public ResponseEntity<ResponseWrapperAdDto> getAdsMeUsingGET(@Parameter(in = ParameterIn.QUERY, description = "",
             schema = @Schema()) @Valid @RequestParam(value = "authenticated", required = false) Boolean authenticated,
                                                                  @Parameter(in = ParameterIn.QUERY, description = "",
@@ -185,7 +185,7 @@ public class AdsApiController  {
             @ApiResponse(responseCode = "403", description = "Forbidden")})
     @RequestMapping(value = "/ads/{id}",
             method = RequestMethod.DELETE)
-//    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Void> removeAds(@Parameter(in = ParameterIn.PATH, description = "", required = true,
             schema = @Schema()) @PathVariable("id") Integer id) {
         AdDto result = adService.removeAds(id);
@@ -206,7 +206,7 @@ public class AdsApiController  {
             produces = {"application/json"},
             consumes = {"application/json"},
             method = RequestMethod.PATCH)
-//    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<AdDto> updateAds(@Parameter(in = ParameterIn.PATH, description = "", required = true,
             schema = @Schema()) @PathVariable("id") Integer id,
                                            @Parameter(in = ParameterIn.DEFAULT, description = "", required = true,
@@ -224,7 +224,7 @@ public class AdsApiController  {
             produces = {"application/json"},
             consumes = {"application/json"},
             method = RequestMethod.PATCH)
-//    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<CommentDto> updateComments(@Parameter(in = ParameterIn.PATH, description = "", required = true,
             schema = @Schema()) @PathVariable("ad_pk") String adPk,
                                                      @Parameter(in = ParameterIn.PATH, description = "", required = true,

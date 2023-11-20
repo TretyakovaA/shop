@@ -43,17 +43,25 @@ class UserServiceImplTest {
 
     @Test
     void getUser() {
+        when(auth.getName()).thenReturn(USERNAME_1);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(USER_1));
         when(userRepository.findById(any(Integer.class))).thenReturn(Optional.of(USER_1));
         when(userDtoMapper.toDto(any(User.class))).thenReturn(USER_DTO_1);
 
-        assertEquals(out.getUser(ID1), USER_DTO_1);
+        assertEquals(out.getUser(), USER_DTO_1);
+        SecurityContextHolder.clearContext();
     }
 
     @Test
     void userNotFoundExceptionWhenGetUser() {
+        when(auth.getName()).thenReturn(USERNAME_1);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(USER_1));
         when(userRepository.findById(any(Integer.class))).thenReturn(Optional.empty());
 
-        assertThrows(UserNotFoundException.class, () -> out.getUser(ID1));
+        assertThrows(UserNotFoundException.class, () -> out.getUser());
+        SecurityContextHolder.clearContext();
     }
 
     @Test

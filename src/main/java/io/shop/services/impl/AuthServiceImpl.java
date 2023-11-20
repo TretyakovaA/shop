@@ -38,9 +38,7 @@ public class AuthServiceImpl implements AuthService {
         );
 
         String encryptedPassword = user.getPassword();
-        String encryptedPasswordWithoutEncryptionType = encryptedPassword; //.substring(8);
-        //return encoder.matches(password, encryptedPasswordWithoutEncryptionType);
-        return encryptedPassword.equals(encryptedPasswordWithoutEncryptionType);
+        return encoder.matches(password, encryptedPassword);
 
 //        if (!manager.userExists(userName)) {
 //            return false;
@@ -63,11 +61,10 @@ public class AuthServiceImpl implements AuthService {
             throw new RuntimeException("Пользователь с таким логином уже есть в базе");
         }
 
-
         user = registerReqDtoMapper.toEntity(registerReqDto);
+        user.setPassword(encoder.encode(registerReqDto.getPassword()));
         user.setRole(roleEnum);
         userRepository.save(user);
-
 
 //        if (manager.userExists(registerReqDto.getUsername())) {
 //           return false;
