@@ -1,10 +1,10 @@
 package io.shop.services.impl;
 
 import io.shop.exceptions.AdNotFoundException;
-import io.shop.model.StoredImage;
-import io.shop.repository.StoredImageRepository;
 import io.shop.model.Ad;
+import io.shop.model.StoredImage;
 import io.shop.repository.AdRepository;
+import io.shop.repository.StoredImageRepository;
 import io.shop.services.api.ImageService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;

@@ -14,7 +14,7 @@ import javax.sql.DataSource;
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @EnableWebSecurity
-        (debug = true)
+  //      (debug = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private DataSource dataSource;

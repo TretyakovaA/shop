@@ -39,15 +39,15 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByUsername(auth.getName()).orElseThrow(()
                 -> {
             throw new UserNotFoundException("Пользователь с именем "+ auth.getName()+" не найден в базе");});
-        Integer id = user.getId();
+//        Integer id = user.getId();
+//
+//        User foundUser = userRepository.findById(id).orElseThrow(() -> {
+//            logger.info("Пользователь с id " + id + " не найден");
+//            throw new UserNotFoundException(id);
+//        });
 
-        User foundUser = userRepository.findById(id).orElseThrow(() -> {
-            logger.info("Пользователь с id " + id + " не найден");
-            throw new UserNotFoundException(id);
-        });
-
-        logger.info("Пользователь с id " + id + " найден");
-        return userDtoMapper.toDto(foundUser);
+        logger.info("Пользователь с логином " + auth.getName() + " найден");
+        return userDtoMapper.toDto(user);
     }
 
     @Override
@@ -66,10 +66,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto updateUser(UserDto body) {
-        User oldUser = userRepository.findById(body.getId()).orElseThrow(()
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User oldUser = userRepository.findByUsername(auth.getName()).orElseThrow(()
                 -> {
-            throw new UserNotFoundException(body.getId());
-        });
+            throw new UserNotFoundException("Пользователь с именем "+ auth.getName()+" не найден в базе");});
+//        Integer id = user.getId();
+//
+//        User oldUser = userRepository.findById(id).orElseThrow(()
+//                -> {
+//            throw new UserNotFoundException(id);
+//        });
         if (body.getCity() != null) {
             oldUser.setCity(body.getCity());
         }

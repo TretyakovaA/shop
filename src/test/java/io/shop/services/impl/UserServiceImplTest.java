@@ -46,7 +46,6 @@ class UserServiceImplTest {
         when(auth.getName()).thenReturn(USERNAME_1);
         SecurityContextHolder.getContext().setAuthentication(auth);
         when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(USER_1));
-        when(userRepository.findById(any(Integer.class))).thenReturn(Optional.of(USER_1));
         when(userDtoMapper.toDto(any(User.class))).thenReturn(USER_DTO_1);
 
         assertEquals(out.getUser(), USER_DTO_1);
@@ -57,8 +56,7 @@ class UserServiceImplTest {
     void userNotFoundExceptionWhenGetUser() {
         when(auth.getName()).thenReturn(USERNAME_1);
         SecurityContextHolder.getContext().setAuthentication(auth);
-        when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(USER_1));
-        when(userRepository.findById(any(Integer.class))).thenReturn(Optional.empty());
+        when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.empty());
 
         assertThrows(UserNotFoundException.class, () -> out.getUser());
         SecurityContextHolder.clearContext();
@@ -87,18 +85,24 @@ class UserServiceImplTest {
 
     @Test
     void updateUser() {
-        when(userRepository.findById(any(Integer.class))).thenReturn(Optional.of(USER_1));
+        when(auth.getName()).thenReturn(USERNAME_1);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(USER_1));
         when(userDtoMapper.toDto(any(User.class))).thenReturn(USER_DTO_1);
         when(userRepository.save(any(User.class))).thenReturn(USER_1);
 
         assertEquals(out.updateUser(USER_DTO_1), USER_DTO_1);
+        SecurityContextHolder.clearContext();
     }
 
     @Test
     void userNotFoundExceptionWhenUpdateUser() {
-        when(userRepository.findById(any(Integer.class))).thenReturn(Optional.empty());
+        when(auth.getName()).thenReturn(USERNAME_1);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.empty());
 
         assertThrows(UserNotFoundException.class, () -> out.updateUser(USER_DTO_1));
+        SecurityContextHolder.clearContext();
     }
 
     @Test

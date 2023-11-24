@@ -39,14 +39,6 @@ public class AuthServiceImpl implements AuthService {
 
         String encryptedPassword = user.getPassword();
         return encoder.matches(password, encryptedPassword);
-
-//        if (!manager.userExists(userName)) {
-//            return false;
-//        }
-//        UserDetails userDetails = manager.loadUserByUsername(userName);
-//        String encryptedPassword = userDetails.getPassword();
-//        String encryptedPasswordWithoutEncryptionType = encryptedPassword.substring(8);
-//        return encoder.matches(password, encryptedPasswordWithoutEncryptionType);
     }
 
     @Override
@@ -66,16 +58,6 @@ public class AuthServiceImpl implements AuthService {
         user.setRole(roleEnum);
         userRepository.save(user);
 
-//        if (manager.userExists(registerReqDto.getUsername())) {
-//           return false;
-//        }
-//        manager.createUser(
-//                User.withDefaultPasswordEncoder()
-//                        .password(registerReqDto.getPassword())
-//                        .username(registerReqDto.getUsername())
-//                        .roles(roleEnum.name())
-//                        .build()
-//        );
         return true;
     }
 }

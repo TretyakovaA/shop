@@ -1,6 +1,7 @@
 package io.shop.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.shop.services.api.AdService;
 import io.shop.services.api.ImageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -35,11 +36,14 @@ public class ImageApiController {
     private final HttpServletRequest request;
     private final ImageService imageService;
 
+    private final AdService adService;
+
     @org.springframework.beans.factory.annotation.Autowired
-    public ImageApiController(ObjectMapper objectMapper, HttpServletRequest request, ImageService imageService) {
+    public ImageApiController(ObjectMapper objectMapper, HttpServletRequest request, ImageService imageService, AdService adService) {
         this.objectMapper = objectMapper;
         this.request = request;
         this.imageService = imageService;
+        this.adService = adService;
     }
 
     @Operation(summary = "updateAdsImage", description = "", tags={ "Изображения" })
@@ -56,5 +60,11 @@ public class ImageApiController {
             @Parameter(description = "file detail") @Valid @RequestPart("file") MultipartFile image) throws IOException {
         return ResponseEntity.ok(imageService.updateImage(id, image));
     }
+
+//    @Operation(summary = "get ad image", tags={ "Изображения" })
+//    @GetMapping(value = "/ads/image/{name}", produces = MediaType.IMAGE_PNG_VALUE)
+//    ResponseEntity<byte[]> getAdImage(@PathVariable("name") String name) {
+//        return ResponseEntity.ok(adService.getImageById(name));
+//    }
 
 }

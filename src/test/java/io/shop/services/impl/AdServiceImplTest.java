@@ -16,6 +16,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.io.IOException;
 import java.util.List;
@@ -66,27 +68,37 @@ class AdServiceImplTest {
     private ResponseWrapperAdDtoMapper responseWrapperAdDtoMapper;
 
     @Mock
+    private Authentication auth;
+
+    @Mock
     private ResponseWrapperCommentDtoMapper responseWrapperCommentDtoMapper;
 
     @Test
     void addAds() throws IOException {
-        //when(createAdDtoMapper.toDto(AD_1)).thenReturn(CREATE_AD_DTO_1);
+        when(auth.getName()).thenReturn(USERNAME_1);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(USER_1));
         when(createAdDtoMapper.toEntity(CREATE_AD_DTO_1)).thenReturn(AD_1);
         when(adRepository.save(any(Ad.class))).thenReturn((AD_1));
         when(imageService.uploadFile(any())).thenReturn(null);
         when(adDtoMapper.toDto(AD_1)).thenReturn(AD_DTO_1);
 
         assertEquals(out.addAds(CREATE_AD_DTO_1, null), AD_DTO_1);
+        SecurityContextHolder.clearContext();
     }
 
     @Test
     void addComments() {
+        when(auth.getName()).thenReturn(USERNAME_1);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(USER_1));
         when(commentDtoMapper.toEntity(COMMENT_DTO_1)).thenReturn(COMMENT_1);
         when(adRepository.findById(any(Integer.class))).thenReturn(Optional.of(AD_1));
         when(commentRepository.save(any(Comment.class))).thenReturn(COMMENT_1);
         when(commentDtoMapper.toDto(COMMENT_1)).thenReturn(COMMENT_DTO_1);
 
         assertEquals(out.addComments(1, COMMENT_DTO_1), COMMENT_DTO_1);
+        SecurityContextHolder.clearContext();
     }
 
     @Test
@@ -98,18 +110,26 @@ class AdServiceImplTest {
 
     @Test
     void deleteComments() {
+        when(auth.getName()).thenReturn(USERNAME_1);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(USER_1));
         when(commentDtoMapper.toDto(COMMENT_1)).thenReturn(COMMENT_DTO_1);
         when(commentRepository.findById(any(Integer.class))).thenReturn(Optional.of(COMMENT_1));
         doNothing().when(commentRepository).delete(COMMENT_1);
 
         assertEquals(out.deleteComments(0, ID1), COMMENT_DTO_1);
+        SecurityContextHolder.clearContext();
     }
 
     @Test
     void commentNotFoundExceptionWhenDeleteComments (){
+        when(auth.getName()).thenReturn(USERNAME_1);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(USER_1));
         when(commentRepository.findById(any(Integer.class))).thenReturn(Optional.empty());
 
         assertThrows(CommentNotFoundException.class, () -> out.deleteComments(0, ID1));
+        SecurityContextHolder.clearContext();
     }
 
     @Test
@@ -147,6 +167,16 @@ class AdServiceImplTest {
 
     @Test
     void getAdsMeUsingGET() {
+        when(auth.getName()).thenReturn(USERNAME_1);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(USER_1));
+        when(adRepository.findByAuthor(any(User.class))).thenReturn(List.of(AD_1));
+        when(adDtoMapper.toDtos(anyList())).thenReturn(List.of(AD_DTO_1));
+        when(responseWrapperAdDtoMapper.toDto(1, List.of(AD_DTO_1))).thenReturn(RESPONSE_WRAPPER_AD_DTO_1);
+
+        assertEquals(out.getAdsMeUsingGET(null, null, null,null, null),
+                RESPONSE_WRAPPER_AD_DTO_1);
+        SecurityContextHolder.clearContext();
     }
 
     @Test
@@ -184,11 +214,16 @@ class AdServiceImplTest {
 
     @Test
     void removeAds() {
+        when(auth.getName()).thenReturn(USERNAME_1);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(USER_1));
+
         when(adDtoMapper.toDto(AD_1)).thenReturn(AD_DTO_1);
         when(adRepository.findById(any(Integer.class))).thenReturn(Optional.of(AD_1));
         doNothing().when(adRepository).delete(AD_1);
 
         assertEquals(out.removeAds(ID1), AD_DTO_1);
+        SecurityContextHolder.clearContext();
     }
 
     @Test
@@ -200,11 +235,15 @@ class AdServiceImplTest {
 
     @Test
     void updateAds() {
+        when(auth.getName()).thenReturn(USERNAME_1);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(USER_1));
         when(adRepository.findById(any(Integer.class))).thenReturn(Optional.of(AD_1));
         when(adDtoMapper.toDto(AD_1)).thenReturn(AD_DTO_1);
         when(adRepository.save(any(Ad.class))).thenReturn(AD_1);
 
         assertEquals(out.updateAds(ID1, CREATE_AD_DTO_1), AD_DTO_1);
+        SecurityContextHolder.clearContext();
     }
 
     @Test
@@ -216,11 +255,15 @@ class AdServiceImplTest {
 
     @Test
     void updateComments() {
+        when(auth.getName()).thenReturn(USERNAME_1);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(USER_1));
         when(commentRepository.findById(any(Integer.class))).thenReturn(Optional.of(COMMENT_1));
         when(commentDtoMapper.toDto(COMMENT_1)).thenReturn(COMMENT_DTO_1);
         when(commentRepository.save(any(Comment.class))).thenReturn(COMMENT_1);
 
         assertEquals(out.updateComments(0, ID1, COMMENT_DTO_1), COMMENT_DTO_1);
+        SecurityContextHolder.clearContext();
     }
 
     @Test
