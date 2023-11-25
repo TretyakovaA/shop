@@ -5,9 +5,9 @@ import io.shop.exceptions.AdNotFoundException;
 import io.shop.exceptions.CommentNotFoundException;
 import io.shop.exceptions.UserNotFoundException;
 import io.shop.mapper.*;
-import io.shop.model.StoredImage;
 import io.shop.model.Ad;
 import io.shop.model.Comment;
+import io.shop.model.StoredImage;
 import io.shop.model.User;
 import io.shop.repository.AdRepository;
 import io.shop.repository.CommentRepository;
@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -99,6 +100,7 @@ public class AdServiceImpl implements AdService {
             logger.info("Объявление с id " + adPk + " не найден");
             throw new AdNotFoundException(adPk);
         }));
+        comment.setCreatedAt(LocalDateTime.now());
 
         //добавить комментарий может только зарегистрированный пользователь или админ
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

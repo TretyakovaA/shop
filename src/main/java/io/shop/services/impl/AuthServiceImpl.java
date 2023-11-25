@@ -13,6 +13,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 public class AuthServiceImpl implements AuthService {
 
@@ -56,6 +58,7 @@ public class AuthServiceImpl implements AuthService {
         user = registerReqDtoMapper.toEntity(registerReqDto);
         user.setPassword(encoder.encode(registerReqDto.getPassword()));
         user.setRole(roleEnum);
+        user.setRegDate(LocalDateTime.now());
         userRepository.save(user);
 
         return true;

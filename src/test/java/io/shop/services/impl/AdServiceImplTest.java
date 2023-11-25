@@ -102,7 +102,7 @@ class AdServiceImplTest {
     }
 
     @Test
-    void adNotFoundExceptionWhenAdComments (){
+    void adNotFoundExceptionWhenAddComments (){
         when(adRepository.findById(any(Integer.class))).thenReturn(Optional.empty());
 
         assertThrows(AdNotFoundException.class, () -> out.addComments(1, COMMENT_DTO_1));
