@@ -1,25 +1,40 @@
 package io.shop.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.shop.dto.RoleEnum;
 import io.shop.mapper.*;
 import io.shop.model.Ad;
 import io.shop.model.Comment;
 import io.shop.model.User;
 import io.shop.repository.AdRepository;
 import io.shop.repository.CommentRepository;
+import io.shop.repository.UserRepository;
 import io.shop.services.api.ImageService;
 import io.shop.services.impl.AdServiceImpl;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+
+import static io.shop.services.impl.Constants.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 @AutoConfigureMockMvc
 @SpringBootTest
 class AdsApiControllerTest {
@@ -39,156 +54,207 @@ class AdsApiControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @SpyBean
+    @Mock
     private AdBodyDtoMapper adBodyDtoMapper;
 
-    @SpyBean
+    @Mock
     private AdDtoMapper adDtoMapper;
 
-    @SpyBean
+    @Mock
     private CommentDtoMapper commentDtoMapper;
 
-    @SpyBean
+    @Mock
     private CreateAdDtoMapper createAdDtoMapper;
 
-    @SpyBean
+    @Mock
     private FullAdDtoMapper fullAdDtoMapper;
 
-    @SpyBean
+    @Mock
     private ResponseWrapperAdDtoMapper responseWrapperAdDtoMapper;
 
-    @SpyBean
+    @Mock
     private ResponseWrapperCommentDtoMapper responseWrapperCommentDtoMapper;
 
-    @SpyBean
+    @Mock
     private ImageService imageService;
 
-    public Comment resultComment() {
-        Comment comment = new Comment();
-        Ad ad = new Ad();
-        ad.setPk(1);
-        comment.setAd(ad);
-        comment.setPk(1);
-        comment.setText("текст объявления");
-        User user = new User();
-        user.setId(1);
-        comment.setAuthor(user);
-        comment.setCreatedAt(LocalDateTime.of(2023, 10, 1, 12, 00));
-        return comment;
-    }
+    @Mock
+    private Authentication auth;
 
-    public Ad resultAd() {
-        Ad ad = new Ad();
-        ad.setPk(1);
-        User user = new User();
-        user.setId(1);
-        ad.setAuthor(user);
-        Comment comment = new Comment();
-        comment.setPk(1);
-        List<Comment> comments = List.of(comment);
-        ad.setComments(comments);
-        ad.setPrice(1000);
-        ad.setTitle("Заголовок объявления");
-        ad.setDescription("Описание объявления");
-        ad.setStoredImage(null);
-        return ad;
-    }
+    @MockBean
+    private UserRepository userRepository;
 
-    public User resultUser() {
-        User user = new User();
-        user.setId(1);
-        user.setImage(null);
-        user.setAds(null);
-        user.setPassword("password");
-        user.setFirstName("Timofei");
-        user.setLastName("Timofeev");
-        user.setCity("Moscow");
-        user.setEmail("timofeev@gmail.com");
-        user.setComments(null);
-        user.setPhone("+12345678");
-        user.setRegDate(LocalDateTime.parse("2023-10-01T12:00:00.00000"));
-        user.setRole(RoleEnum.USER);
-        user.setUsername("timofeev@gmail.com");
-        return user;
-    }
-
-    /*@Test
+    @Test
     void addAds() throws Exception {
-//        String description = "Описание объявления";
-//        Integer price = 1000;
-//        String title = "Заголовок объявления";
-//
-//        CreateAdDto addedAdDto = new CreateAdDto();
-//        addedAdDto.setDescription(description);
-//        addedAdDto.setPrice(price);
-//        addedAdDto.setTitle(title);
-//
-//        Ad addedAd = new Ad();
-//        addedAd.setStoredImage();
-//        addedAd.setDescription();
-//        addedAd.setPk();
-//        addedAd.setTitle();
-//        addedAd.setPrice();
-//        addedAd.setAuthor();
-//        addedAd.setComments();
+        String jsonResult = objectMapper.writeValueAsString(AD_DTO_1);
 
-        String jsonResult = objectMapper.writeValueAsString(adDtoMapper.toDto(resultAd()));
-
-//        CreateAdDto newAdDto = new CreateAdDto();
-//        newAdDto.setDescription(description);
-//        newAdDto.setPrice(price);
-//        newAdDto.setTitle(title);
-
+        when(auth.getName()).thenReturn(USERNAME_1);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(USER_1));
         when(createAdDtoMapper.toEntity(CREATE_AD_DTO_1)).thenReturn(AD_1);
         when(adRepository.save(any(Ad.class))).thenReturn((AD_1));
         when(imageService.uploadFile(any())).thenReturn(null);
         when(adDtoMapper.toDto(AD_1)).thenReturn(AD_DTO_1);
 
+        //assertEquals(out.addAds(CREATE_AD_DTO_1, null), AD_DTO_1);
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/ads") //посылаем
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(CREATE_AD_DTO_1))
+
+                        //        .content(objectMapper.writeValueAsString(null))
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().json(jsonResult));
+
+        SecurityContextHolder.clearContext();
+    }
+
+    @Test
+    void addComments() throws Exception {
+        String jsonResult = objectMapper.writeValueAsString(COMMENT_DTO_1);
+
+        when(auth.getName()).thenReturn(USERNAME_1);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(USER_1));
+        when(commentDtoMapper.toEntity(COMMENT_DTO_1)).thenReturn(COMMENT_1);
+        when(adRepository.findById(any(Integer.class))).thenReturn(Optional.of(AD_1));
+        when(commentRepository.save(any(Comment.class))).thenReturn(COMMENT_1);
+        when(commentDtoMapper.toDto(COMMENT_1)).thenReturn(COMMENT_DTO_1);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                                .post("/ads/" + ID1 + "/comments") //посылаем
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(COMMENT_DTO_1))
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().json(jsonResult));
+
+        SecurityContextHolder.clearContext();
+    }
+
+    @Test
+    void deleteComments() throws Exception {
+        when(auth.getName()).thenReturn(USERNAME_1);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(USER_1));
+        when(commentDtoMapper.toDto(COMMENT_1)).thenReturn(COMMENT_DTO_1);
+        when(commentRepository.findById(any(Integer.class))).thenReturn(Optional.of(COMMENT_1));
+        doNothing().when(commentRepository).delete(COMMENT_1);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .delete("/ads/" + ID1 + "/comments/" + ID1) //посылаем
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isOk());
+
+        SecurityContextHolder.clearContext();
+    }
+
+    @Test
+    void getALLAds() throws Exception {
+        String jsonResult = objectMapper.writeValueAsString(RESPONSE_WRAPPER_AD_DTO_1);
+
+        when(adRepository.findAll()).thenReturn(List.of(AD_1));
+        when(adDtoMapper.toDtos(anyList())).thenReturn(List.of(AD_DTO_1));
+        when(responseWrapperAdDtoMapper.toDto(1, List.of(AD_DTO_1))).thenReturn(RESPONSE_WRAPPER_AD_DTO_1);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/ads") //посылаем
+                        .contentType(MediaType.APPLICATION_JSON)
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json(jsonResult));
     }
 
-     */
-
     @Test
-    void addComments() {
+    void getAds() throws Exception {
+        String jsonResult = objectMapper.writeValueAsString(FULL_AD_DTO_1);
+
+        when(adRepository.findById(any(Integer.class))).thenReturn(Optional.of(AD_1));
+        when(userRepository.findById(any(Integer.class))).thenReturn(Optional.of(USER_1));
+        when(fullAdDtoMapper.toDto(any(Ad.class), any(User.class))).thenReturn(FULL_AD_DTO_1);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/ads/" + ID1) //посылаем
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().json(jsonResult));
     }
 
     @Test
-    void deleteComments() {
+    void getAdsMeUsingGET() throws Exception {
+        String jsonResult = objectMapper.writeValueAsString(RESPONSE_WRAPPER_AD_DTO_1);
+
+        when(auth.getName()).thenReturn(USERNAME_1);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(USER_1));
+        when(adRepository.findByAuthor(any(User.class))).thenReturn(List.of(AD_1));
+        when(adDtoMapper.toDtos(anyList())).thenReturn(List.of(AD_DTO_1));
+        when(responseWrapperAdDtoMapper.toDto(1, List.of(AD_DTO_1))).thenReturn(RESPONSE_WRAPPER_AD_DTO_1);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/ads/me") //посылаем
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().json(jsonResult));
+
+        SecurityContextHolder.clearContext();
     }
 
     @Test
-    void getALLAds() {
+    void getComments() throws Exception {
+        String jsonResult = objectMapper.writeValueAsString(RESPONSE_WRAPPER_COMMENT_DTO_1);
+
+        when(adRepository.findById(any(Integer.class))).thenReturn(Optional.of(AD_1));
+        when(commentDtoMapper.toDtos(anyList())).thenReturn(List.of(COMMENT_DTO_1));
+        when(responseWrapperCommentDtoMapper.toDto(1, List.of(COMMENT_DTO_1))).thenReturn(RESPONSE_WRAPPER_COMMENT_DTO_1);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/ads/" + ID1 + "/comments") //посылаем
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().json(jsonResult));
     }
 
     @Test
-    void getAds() {
+    void getComments1() throws Exception {
+        String jsonResult = objectMapper.writeValueAsString(COMMENT_DTO_1);
+        when(commentRepository.findById(any(Integer.class))).thenReturn(Optional.of(COMMENT_1));
+        when(commentDtoMapper.toDto(any(Comment.class))).thenReturn(COMMENT_DTO_1);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/ads/" + ID1 + "/comments/" + ID1) //посылаем
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().json(jsonResult));
     }
 
     @Test
-    void getAdsMeUsingGET() {
-    }
+    void removeAds() throws Exception {
+        when(auth.getName()).thenReturn(USERNAME_1);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(USER_1));
+        when(adDtoMapper.toDto(AD_1)).thenReturn(AD_DTO_1);
+        when(adRepository.findById(any(Integer.class))).thenReturn(Optional.of(AD_1));
+        doNothing().when(adRepository).delete(AD_1);
 
-    @Test
-    void getComments() {
-    }
+        mockMvc.perform(MockMvcRequestBuilders
+                        .delete("/ads/" + ID1) //посылаем
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isOk());
 
-    @Test
-    void getComments1() {
-    }
-
-    @Test
-    void removeAds() {
+        SecurityContextHolder.clearContext();
     }
 
     @Test
     void updateAds() {
+
     }
 
     @Test

@@ -46,9 +46,13 @@ public class AdDtoMapper {
         adDto.setPk(ad.getPk());
         adDto.setAuthor(ad.getAuthor().getId());
         List<String> tempList = new ArrayList<>();
-        for (int i = 0; i < ad.getStoredImage().size(); i++){
-            String temp =  ad.getStoredImage().get(i).getPath();
-            tempList.add(temp);
+        if (ad.getStoredImage()== null){
+            tempList = null;
+        } else {
+            for (int i = 0; i < ad.getStoredImage().size(); i++) {
+                String temp = ad.getStoredImage().get(i).getPath();
+                tempList.add(temp);
+            }
         }
         adDto.setImage(tempList);
         adDto.setPrice(ad.getPrice());
