@@ -18,11 +18,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,6 +34,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -93,16 +97,16 @@ class AdsApiControllerTest {
         when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(USER_1));
         when(createAdDtoMapper.toEntity(CREATE_AD_DTO_1)).thenReturn(AD_1);
         when(adRepository.save(any(Ad.class))).thenReturn((AD_1));
-        when(imageService.uploadFile(any())).thenReturn(null);
+        when(imageService.uploadFile(any())).thenReturn(Path.of("src/main/resources/pictures/user_avatar.jpg"));
         when(adDtoMapper.toDto(AD_1)).thenReturn(AD_DTO_1);
 
-        //assertEquals(out.addAds(CREATE_AD_DTO_1, null), AD_DTO_1);
-        mockMvc.perform(MockMvcRequestBuilders
-                        .post("/ads") //посылаем
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(CREATE_AD_DTO_1))
+        String myContent = objectMapper.writeValueAsString(CREATE_AD_DTO_1);
+        MockMultipartFile jsonValue =
+                new MockMultipartFile("properties", null, MediaType.APPLICATION_JSON_VALUE, myContent.getBytes());
 
-                        //        .content(objectMapper.writeValueAsString(null))
+        mockMvc.perform(multipart("/ads") //посылаем
+                        .file(jsonValue)
+                        .file("file", Files.readAllBytes(Path.of("src/main/resources/pictures/user_avatar.jpg")))
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json(jsonResult));
@@ -223,6 +227,7 @@ class AdsApiControllerTest {
     @Test
     void getComments1() throws Exception {
         String jsonResult = objectMapper.writeValueAsString(COMMENT_DTO_1);
+
         when(commentRepository.findById(any(Integer.class))).thenReturn(Optional.of(COMMENT_1));
         when(commentDtoMapper.toDto(any(Comment.class))).thenReturn(COMMENT_DTO_1);
 
@@ -253,11 +258,46 @@ class AdsApiControllerTest {
     }
 
     @Test
-    void updateAds() {
+    void updateAds() throws Exception {
+        String jsonResult = objectMapper.writeValueAsString(AD_DTO_1);
 
+        when(auth.getName()).thenReturn(USERNAME_1);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(USER_1));
+        when(adRepository.findById(any(Integer.class))).thenReturn(Optional.of(AD_1));
+        when(adDtoMapper.toDto(AD_1)).thenReturn(AD_DTO_1);
+        when(adRepository.save(any(Ad.class))).thenReturn(AD_1);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .patch("/ads/" + ID1) //посылаем
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(CREATE_AD_DTO_1))
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().json(jsonResult));
+
+        SecurityContextHolder.clearContext();
     }
 
     @Test
-    void updateComments() {
+    void updateComments() throws Exception {
+        String jsonResult = objectMapper.writeValueAsString(COMMENT_DTO_1);
+
+        when(auth.getName()).thenReturn(USERNAME_1);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(USER_1));
+        when(commentRepository.findById(any(Integer.class))).thenReturn(Optional.of(COMMENT_1));
+        when(commentDtoMapper.toDto(COMMENT_1)).thenReturn(COMMENT_DTO_1);
+        when(commentRepository.save(any(Comment.class))).thenReturn(COMMENT_1);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .patch("/ads/" + ID1 + "/comments/" + ID1) //посылаем
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(COMMENT_DTO_1))
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().json(jsonResult));
+
+        SecurityContextHolder.clearContext();
     }
 }

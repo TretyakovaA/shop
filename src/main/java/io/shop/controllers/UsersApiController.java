@@ -54,7 +54,7 @@ public class UsersApiController {
             produces = {"application/json"},
             method = RequestMethod.GET)
    //@PreAuthorize("(hasRole('USER') or hasRole('ADMIN')) ")
-    @PreAuthorize("(hasRole('USER') or hasRole('ADMIN')) and (#username == authentication.principal.username)")
+   @PreAuthorize("(hasRole('USER') or hasRole('ADMIN')) and (#username == authentication.principal.username)")
     public ResponseEntity<UserDto> getUser1() {
         return ResponseEntity.ok(userService.getUser());
     }
@@ -99,9 +99,9 @@ public class UsersApiController {
     @RequestMapping(value = "/users/me/image",
             consumes = {"multipart/form-data"},
             method = RequestMethod.PATCH)
-    @PreAuthorize("(hasRole('USER') or hasRole('ADMIN')) and (#username == authentication.principal.username) ")
+    //@PreAuthorize("(hasRole('USER') or hasRole('ADMIN')) and (#username == authentication.principal.username) ")
     public ResponseEntity<UserDto> updateUserImage(@Parameter(description = "file detail")
-                                                @Valid @RequestPart("file") MultipartFile image) throws IOException {
+                                               /* @Valid*/ @RequestPart("file") MultipartFile image) throws IOException {
         return ResponseEntity.ok(userService.updateUserImage(image));
     }
 

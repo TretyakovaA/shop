@@ -1,10 +1,10 @@
 package io.shop.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.shop.dto.RoleEnum;
 import io.shop.mapper.UserDtoMapper;
 import io.shop.model.User;
 import io.shop.repository.UserRepository;
+import io.shop.services.api.ImageService;
 import io.shop.services.impl.UserServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -13,10 +13,23 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.time.LocalDateTime;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Optional;
+
+import static io.shop.services.impl.Constants.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -34,99 +47,101 @@ class UsersApiControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @SpyBean
+    @Mock
     private UserDtoMapper userDtoMapper;
 
     @Mock
     private Authentication auth;
 
-    public User resultUser() {
-        User user = new User();
-        user.setId(1);
-        user.setImage(null);
-        user.setAds(null);
-        user.setPassword("password");
-        user.setFirstName("Timofei");
-        user.setLastName("Timofeev");
-        user.setCity("Moscow");
-        user.setEmail("timofeev@gmail.com");
-        user.setComments(null);
-        user.setPhone("+12345678");
-        user.setRegDate(LocalDateTime.parse("2023-10-01T12:00:00.00000"));
-        user.setRole(RoleEnum.USER);
-        user.setUsername("timofeev@gmail.com");
-        return user;
-    }
+    @Mock
+    private ImageService imageService;
 
-  /*  @WithMockUser(username = USERNAME_1)
     @Test
     void getUser1() throws Exception {
-        Integer id = 1;
-        String password = "password";
-        String firstName = "Timofei";
-        String lastName = "Timofeev";
-        String city = "Moscow";
-        String email = "timofeev@gmail.com";
-        String phone = "+12345678";
-        LocalDateTime regDate = LocalDateTime.parse("2023-10-01T12:00:00.00000");
-        RoleEnum role = RoleEnum.USER;
-        String userName = "timofeev@gmail.com";
+        String jsonResult = objectMapper.writeValueAsString(USER_DTO_1);
 
-        String jsonResult = objectMapper.writeValueAsString(userDtoMapper.toDto(resultUser()));
+        when(auth.getName()).thenReturn(USERNAME_1);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(USER_1));
+        when(userDtoMapper.toDto(any(User.class))).thenReturn(USER_DTO_1);
 
-        User foundUser = new User();
-        foundUser.setId(id);
-        foundUser.setUsername(userName);
-        foundUser.setEmail(email);
-        foundUser.setPhone(phone);
-        foundUser.setRole(role);
-        foundUser.setCity(city);
-        foundUser.setComments(null);
-        foundUser.setAds(null);
-        foundUser.setPassword(password);
-        foundUser.setLastName(lastName);
-        foundUser.setFirstName(firstName);
-        foundUser.setRegDate(regDate);
-        foundUser.setImage(null);
-
-        when(userRepository.findById(any(Integer.class))).thenReturn(Optional.of(foundUser));
-
+        //assertEquals(out.getUser(), USER_DTO_1);
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/users/me/" + id)
+                        .get("/users/me") //посылаем
+                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(objectMapper.writeValueAsString(COMMENT_DTO_1))
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json(jsonResult));
 
-//        long id = 1L;
-//        String name = "Valya";
-//        String address = "г. Москва, Таймырская ул., д.6";
-//
-//        String jsonResult = objectMapper.writeValueAsString(maternityHospitalDtoMapper.toDto(resultMaternityHospital()));
-//
-//        MaternityHospital foundMaternityHospital = new MaternityHospital();
-//        foundMaternityHospital.setId(id);
-//        foundMaternityHospital.setName(name);
-//        foundMaternityHospital.setAddress(address);
-//
-//        when(maternityHospitalRepository.findById(any(long.class))).thenReturn(Optional.of(foundMaternityHospital));
-//
-//        mockMvc.perform(MockMvcRequestBuilders
-//                        .get("/maternity/hospital/" + id)
-//                ).andDo(print())
-//                .andExpect(status().isOk())
-//                .andExpect(content().json(jsonResult));
-    }
-   */
-
-    @Test
-    void setPassword() {
+        SecurityContextHolder.clearContext();
     }
 
     @Test
-    void updateUser() {
+    void setPassword() throws Exception {
+        String jsonResult = objectMapper.writeValueAsString(NEW_PASSWORD_DTO_1);
+
+        when(auth.getName()).thenReturn(USERNAME_1);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(USER_1));
+        when(userRepository.save(any(User.class))).thenReturn(USER_1);
+
+        //assertEquals(out.setPassword(NEW_PASSWORD_DTO_1), NEW_PASSWORD_DTO_1);
+        mockMvc.perform(MockMvcRequestBuilders
+                                .post("/users/set_password") //посылаем
+                                .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(NEW_PASSWORD_DTO_1))
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().json(jsonResult));
+
+        SecurityContextHolder.clearContext();
     }
 
     @Test
-    void updateUserImage() {
+    void updateUser() throws Exception {
+        String jsonResult = objectMapper.writeValueAsString(USER_DTO_1);
+
+        when(auth.getName()).thenReturn(USERNAME_1);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(USER_1));
+        when(userDtoMapper.toDto(any(User.class))).thenReturn(USER_DTO_1);
+        when(userRepository.save(any(User.class))).thenReturn(USER_1);
+
+        //assertEquals(out.updateUser(USER_DTO_1), USER_DTO_1);
+        mockMvc.perform(MockMvcRequestBuilders
+                        .patch("/users/me") //посылаем
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(USER_DTO_1))
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().json(jsonResult));
+
+        SecurityContextHolder.clearContext();
+    }
+
+    @Test
+    void updateUserImage() throws Exception {
+        String jsonResult = objectMapper.writeValueAsString(USER_DTO_1);
+
+        when(auth.getName()).thenReturn(USERNAME_1);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(USER_1));
+        when(userRepository.save(any(User.class))).thenReturn(USER_1);
+        when(userDtoMapper.toDto(any(User.class))).thenReturn(USER_DTO_1);
+        //when(imageService.uploadFile(null)).thenReturn(Path.of(IMAGE_1));
+        when(imageService.uploadFile(any())).thenReturn(Path.of("src/main/resources/pictures/user_avatar.jpg"));
+
+        MockMultipartHttpServletRequestBuilder patchMultipart = (MockMultipartHttpServletRequestBuilder)
+                MockMvcRequestBuilders.multipart("/users/me/image")
+                        .with(rq -> { rq.setMethod("PATCH"); return rq; });
+
+        mockMvc.perform(patchMultipart
+                        .file("file", Files.readAllBytes(Path.of("src/main/resources/pictures/user_avatar.jpg")))
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().json(jsonResult));
+
+        SecurityContextHolder.clearContext();
     }
 }

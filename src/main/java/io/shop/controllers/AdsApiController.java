@@ -55,10 +55,14 @@ public class AdsApiController  {
             method = RequestMethod.POST)
     @PreAuthorize("(hasRole('USER') or hasRole('ADMIN')) and (#username == authentication.principal.username)")
     public ResponseEntity<AdDto> addAds(@Parameter(in = ParameterIn.DEFAULT, description = "",
-            schema = @Schema()) @RequestParam(value = "properties", required = false) CreateAdDto properties,
+            schema = @Schema()) @RequestPart(value = "properties", required = false) CreateAdDto properties,
+                                        //schema = @Schema()) @RequestParam(value = "properties", required = false) CreateAdDto properties,
                                         @Parameter(description = "file detail") @Valid @RequestPart("file") MultipartFile image) {
         return ResponseEntity.ok(adService.addAds(properties, image));
     }
+
+//    @RequestMapping(path = "/requestpart/employee", method = POST, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+//    public ResponseEntity<Object> saveEmployee(@RequestPart Employee employee, @RequestPart MultipartFile document) {
 
     @Operation(summary = "addComments", description = "", tags = {"Объявления"})
     @ApiResponses(value = {

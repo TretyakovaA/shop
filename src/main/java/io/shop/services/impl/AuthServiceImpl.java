@@ -1,16 +1,14 @@
 package io.shop.services.impl;
 
-import io.shop.exceptions.UserNotFoundException;
-import io.shop.services.api.AuthService;
 import io.shop.dto.RegisterReqDto;
 import io.shop.dto.RoleEnum;
+import io.shop.exceptions.UserNotFoundException;
 import io.shop.mapper.RegisterReqDtoMapper;
-import io.shop.mapper.UserDtoMapper;
 import io.shop.model.User;
 import io.shop.repository.UserRepository;
+import io.shop.services.api.AuthService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -18,14 +16,11 @@ import java.time.LocalDateTime;
 @Service
 public class AuthServiceImpl implements AuthService {
 
-    private final UserDetailsManager manager;
-
     private final PasswordEncoder encoder;
     private final UserRepository userRepository;
     private final RegisterReqDtoMapper registerReqDtoMapper;
 
-    public AuthServiceImpl(UserDetailsManager manager, UserRepository userRepository, UserDtoMapper userDtoMapper, RegisterReqDtoMapper registerReqDtoMapper) {
-        this.manager = manager;
+    public AuthServiceImpl(UserRepository userRepository, RegisterReqDtoMapper registerReqDtoMapper) {
         this.userRepository = userRepository;
         this.registerReqDtoMapper = registerReqDtoMapper;
         this.encoder = new BCryptPasswordEncoder();
@@ -40,7 +35,8 @@ public class AuthServiceImpl implements AuthService {
         );
 
         String encryptedPassword = user.getPassword();
-        return encoder.matches(password, encryptedPassword);
+        boolean okLogin = encoder.matches(password, encryptedPassword);
+        return okLogin;
     }
 
     @Override
