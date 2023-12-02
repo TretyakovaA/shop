@@ -99,7 +99,14 @@ public class UserServiceImpl implements UserService {
         }
         return userDtoMapper.toDto(userRepository.save(oldUser));
     }
+/*
+2) Поле image в DTO это не путь к файлу в файловой системе, а путь к эндпоинту,
+с помощью которого фронтеэнд это изображение может запросить. То есть не
+"src/main/resources/pictures/01.png"
 
+а
+"/files/01.png/download"
+ */
     @Override
     public UserDto updateUserImage(MultipartFile image) throws IOException {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -107,7 +114,8 @@ public class UserServiceImpl implements UserService {
                 -> {
             throw new UserNotFoundException("Пользователь с именем "+ auth.getName()+" не найден в базе");});
         Path path = imageService.uploadFile(image);
-        user.setImage(path.toString());
+        //user.setImage(path.toString());
+        user.setImage("/files/"+path.getFileName().toString()+"/download");
         userRepository.save(user);
         return userDtoMapper.toDto(user);
     }

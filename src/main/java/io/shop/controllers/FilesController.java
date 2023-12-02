@@ -30,8 +30,8 @@ public class FilesController {
     private String filesDir;
 
     @GetMapping(value = "/files/{name}/download")
-    public void downloadFile(@PathVariable String name, HttpServletResponse response) throws IOException {
-        imageService.downloadFile(name, response);
+    public ResponseEntity<Object> downloadFile(@PathVariable String name, HttpServletResponse response) throws IOException {
+       return imageService.downloadFile(name, response);
     }
 
 }

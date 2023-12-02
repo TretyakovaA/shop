@@ -1,7 +1,6 @@
 package io.shop.services.impl;
 
 import io.shop.exceptions.AdNotFoundException;
-import io.shop.exceptions.ImageNotFoundException;
 import io.shop.exceptions.UserNotFoundException;
 import io.shop.model.Ad;
 import io.shop.model.StoredImage;
@@ -49,14 +48,16 @@ public class ImageServiceImpl implements ImageService {
     public Path uploadFile(MultipartFile file) throws IOException {
         Path filePath = Path.of(filesDir,file.getOriginalFilename());
 
+        Files.createDirectories(filePath.getParent());
+        Files.deleteIfExists(filePath);
+
         try (
                 InputStream is = file.getInputStream();
                 OutputStream os = Files.newOutputStream(filePath, CREATE_NEW);
                 BufferedInputStream bis = new BufferedInputStream(is, 1024);
                 BufferedOutputStream bos = new BufferedOutputStream(os, 1024);
         ) {
-            Files.createDirectories(filePath.getParent());
-            Files.deleteIfExists(filePath);
+
             bis.transferTo(bos);
         }
         return filePath;
@@ -77,23 +78,10 @@ public class ImageServiceImpl implements ImageService {
         } else {
             return ResponseEntity.notFound().build();
         }
-
-       /* Path path = Path.of(filesDir + "/" + name);
-
-        try (
-                InputStream is = Files.newInputStream(path);
-                OutputStream os = response.getOutputStream();
-        ) {
-            response.setStatus(200);
-            response.setContentType(String.valueOf(MediaType.APPLICATION_OCTET_STREAM));
-            response.setContentLength((int) Files.size(path));
-            response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + name);
-            is.transferTo(os);
-        }*/
     }
 
     @Override
-    public List<byte[]> updateImage(Integer id, MultipartFile image) throws IOException {
+    public List<byte[]> updateImage(Integer adId, MultipartFile image) throws IOException {
         //редактировать изображение может только зарегистрированный пользователь
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(auth.getName()).orElseThrow(()
@@ -102,20 +90,19 @@ public class ImageServiceImpl implements ImageService {
         });
 
         //пользователь может изменить только свое изображение
-        StoredImage storedImage = storedImageRepository.findById(id).orElseThrow(()
+        Ad ad = adRepository.findById(adId).orElseThrow(()
                 -> {
-            throw new ImageNotFoundException("Изображение с id " + id + " не найдено в базе", id);
+            throw new AdNotFoundException(adId);
         });
 
-        if (storedImage.getAd().getAuthor().getId() != user.getId()) {
+        if (ad.getAuthor().getId()!= user.getId()) {
             throw new RuntimeException("нет прав на редактирование изображения");
         }
 
         Path path = uploadFile(image);
-        Ad ad = adRepository.findById(id).orElseThrow(()
-                -> { throw new AdNotFoundException(id);});
-         storedImage = new StoredImage();
-        storedImage.setPath(path.toString());
+        StoredImage storedImage = new StoredImage();
+        storedImage.setPath("/files/"+path.getFileName().toString()+"/download");
+        storedImage.setAd(ad);
         storedImage = storedImageRepository.save(storedImage);
         ad.setStoredImage(Arrays.asList(storedImage));
         return Collections.singletonList(image.getBytes());

@@ -74,11 +74,13 @@ public class AdServiceImpl implements AdService {
         });
         ad.setAuthor(user);
 
+        ad = adRepository.save(ad);
+
         try {
             Path imagePath = imageService.uploadFile(image);
             if (imagePath != null) {
                 StoredImage storedImage = new StoredImage();
-                storedImage.setPath(imagePath.toString());
+                storedImage.setPath("/files/"+imagePath.getFileName().toString()+"/download");
                 storedImage.setAd(ad);
                 storedImage.setId(storedImageRepository.save(storedImage).getId());
                 List<StoredImage> storedImages = new ArrayList<>();

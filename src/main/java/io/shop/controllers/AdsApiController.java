@@ -57,7 +57,7 @@ public class AdsApiController  {
     public ResponseEntity<AdDto> addAds(@Parameter(in = ParameterIn.DEFAULT, description = "",
             schema = @Schema()) @RequestPart(value = "properties", required = false) CreateAdDto properties,
                                         //schema = @Schema()) @RequestParam(value = "properties", required = false) CreateAdDto properties,
-                                        @Parameter(description = "file detail") @Valid @RequestPart("file") MultipartFile image) {
+                                        @Parameter(description = "image detail") @Valid @RequestPart("image") MultipartFile image) {
         return ResponseEntity.ok(adService.addAds(properties, image));
     }
 
