@@ -91,22 +91,20 @@ class AdsApiControllerTest {
     @Test
     void addAds() throws Exception {
         String jsonResult = objectMapper.writeValueAsString(AD_DTO_1);
-
         when(auth.getName()).thenReturn(USERNAME_1);
         SecurityContextHolder.getContext().setAuthentication(auth);
         when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(USER_1));
         when(createAdDtoMapper.toEntity(CREATE_AD_DTO_1)).thenReturn(AD_1);
         when(adRepository.save(any(Ad.class))).thenReturn((AD_1));
-        when(imageService.uploadFile(any())).thenReturn(Path.of("src/main/resources/pictures/user_avatar.jpg"));
+        when(imageService.uploadFile(any())).thenReturn(Path.of("/files/user_avatar_test.jpg/download"));
         when(adDtoMapper.toDto(AD_1)).thenReturn(AD_DTO_1);
-
         String myContent = objectMapper.writeValueAsString(CREATE_AD_DTO_1);
         MockMultipartFile jsonValue =
                 new MockMultipartFile("properties", null, MediaType.APPLICATION_JSON_VALUE, myContent.getBytes());
 
         mockMvc.perform(multipart("/ads") //посылаем
                         .file(jsonValue)
-                        .file("file", Files.readAllBytes(Path.of("src/main/resources/pictures/user_avatar.jpg")))
+                        .file("image", Files.readAllBytes(Path.of("src/test/java/resources/user_avatar_test.jpg")))
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json(jsonResult));

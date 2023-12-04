@@ -45,7 +45,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                                 authorization
                                         .mvcMatchers(AUTH_WHITELIST)
                                         .permitAll()
-                                        .mvcMatchers()  // "/users/**", "/users/*")
+                                        .mvcMatchers("/users/**", "/users/*")
                                         .authenticated())
                 .cors()
                 .and()
@@ -59,9 +59,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "/v3/api-docs",
             "/webjars/**",
             "/login", "/register",
-            "/users/**",
-            "/users/me",
-            "/users/me/image",
+//            "/users/**",
+//            "/users/me",
+//            "/users/me/image",
             "/image/**",
             "/ads",
             "/ads/**",

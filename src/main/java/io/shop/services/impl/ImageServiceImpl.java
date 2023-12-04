@@ -8,7 +8,10 @@ import io.shop.model.User;
 import io.shop.repository.AdRepository;
 import io.shop.repository.StoredImageRepository;
 import io.shop.repository.UserRepository;
+import io.shop.services.api.AdService;
 import io.shop.services.api.ImageService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -38,6 +41,8 @@ public class ImageServiceImpl implements ImageService {
 
     private final UserRepository userRepository;
 
+    Logger logger = LoggerFactory.getLogger(AdService.class);
+
     public ImageServiceImpl(StoredImageRepository storedImageRepository, AdRepository adRepository, UserRepository userRepository) {
         this.storedImageRepository = storedImageRepository;
         this.adRepository = adRepository;
@@ -57,7 +62,6 @@ public class ImageServiceImpl implements ImageService {
                 BufferedInputStream bis = new BufferedInputStream(is, 1024);
                 BufferedOutputStream bos = new BufferedOutputStream(os, 1024);
         ) {
-
             bis.transferTo(bos);
         }
         return filePath;
@@ -86,16 +90,19 @@ public class ImageServiceImpl implements ImageService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(auth.getName()).orElseThrow(()
                 -> {
+            logger.info("Не удалось обновить изображение. " + "Пользователь с именем " + auth.getName() + " не найден в базе");
             throw new UserNotFoundException("Пользователь с именем " + auth.getName() + " не найден в базе");
         });
 
         //пользователь может изменить только свое изображение
         Ad ad = adRepository.findById(adId).orElseThrow(()
                 -> {
+            logger.info("Пользователь: " + auth.getName() + " : Изображение не обновлено, объявление с id " + adId + " не найдено");
             throw new AdNotFoundException(adId);
         });
 
         if (ad.getAuthor().getId()!= user.getId()) {
+            logger.info("Пользователь: " + auth.getName() + " : Изображение не обновлено, нет прав на редактирование изображения");
             throw new RuntimeException("нет прав на редактирование изображения");
         }
 
@@ -105,6 +112,8 @@ public class ImageServiceImpl implements ImageService {
         storedImage.setAd(ad);
         storedImage = storedImageRepository.save(storedImage);
         ad.setStoredImage(Arrays.asList(storedImage));
+
+        logger.info("Пользователь: " + auth.getName() + " : Изображение обновлено");
         return Collections.singletonList(image.getBytes());
     }
 }

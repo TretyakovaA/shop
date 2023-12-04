@@ -137,7 +137,7 @@ class UsersApiControllerTest {
                         .with(rq -> { rq.setMethod("PATCH"); return rq; });
 
         mockMvc.perform(patchMultipart
-                        .file("file", Files.readAllBytes(Path.of("src/main/resources/pictures/user_avatar.jpg")))
+                        .file("image", Files.readAllBytes(Path.of("src/main/resources/pictures/user_avatar.jpg")))
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json(jsonResult));

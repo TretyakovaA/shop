@@ -103,9 +103,13 @@ class AdServiceImplTest {
 
     @Test
     void adNotFoundExceptionWhenAddComments (){
+        when(auth.getName()).thenReturn(USERNAME_1);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(USER_1));
         when(adRepository.findById(any(Integer.class))).thenReturn(Optional.empty());
 
         assertThrows(AdNotFoundException.class, () -> out.addComments(1, COMMENT_DTO_1));
+        SecurityContextHolder.clearContext();
     }
 
     @Test
@@ -228,9 +232,13 @@ class AdServiceImplTest {
 
     @Test
     void adNotFoundExceptionWhenRemoveAd (){
+        when(auth.getName()).thenReturn(USERNAME_1);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(USER_1));
         when(adRepository.findById(any(Integer.class))).thenReturn(Optional.empty());
 
         assertThrows(AdNotFoundException.class, () -> out.removeAds(ID1));
+        SecurityContextHolder.clearContext();
     }
 
     @Test
@@ -248,9 +256,13 @@ class AdServiceImplTest {
 
     @Test
     void adNotFoundExceptionWhenUpdateAd (){
+        when(auth.getName()).thenReturn(USERNAME_1);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(USER_1));
         when(adRepository.findById(any(Integer.class))).thenReturn(Optional.empty());
 
         assertThrows(AdNotFoundException.class, () -> out.updateAds(ID1, CREATE_AD_DTO_1));
+        SecurityContextHolder.clearContext();
     }
 
     @Test
@@ -268,8 +280,12 @@ class AdServiceImplTest {
 
     @Test
     void commentNotFoundExceptionWhenUpdateComment (){
+        when(auth.getName()).thenReturn(USERNAME_1);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(USER_1));
         when(commentRepository.findById(any(Integer.class))).thenReturn(Optional.empty());
 
         assertThrows(CommentNotFoundException.class, () -> out.updateComments(0, ID1, COMMENT_DTO_1));
+        SecurityContextHolder.clearContext();
     }
 }
