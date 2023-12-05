@@ -1,6 +1,7 @@
 package io.shop.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.shop.dto.UserDto;
 import io.shop.mapper.UserDtoMapper;
 import io.shop.model.User;
 import io.shop.repository.UserRepository;
@@ -14,8 +15,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -57,36 +59,38 @@ class UsersApiControllerTest {
     private ImageService imageService;
 
     @Test
+    @WithMockUser (username = USERNAME_1)
     void getUser1() throws Exception {
-        String jsonResult = objectMapper.writeValueAsString(USER_DTO_1);
+        UserDto userDto = new UserDto();
+        userDto.setCity(USER_DTO_1.getCity());
+        userDto.setImage("/files/user_avatar_test.jpg/download");
+        userDto.setId(USER_DTO_1.getId());
+        userDto.setEmail(USER_DTO_1.getEmail());
+        userDto.setPhone(USER_DTO_1.getPhone());
+        userDto.setFirstName(USER_DTO_1.getFirstName());
+        userDto.setLastName(USER_DTO_1.getLastName());
+        userDto.regDate(USER_DTO_1.getRegDate());
+        String jsonResult = objectMapper.writeValueAsString(userDto);
 
-        when(auth.getName()).thenReturn(USERNAME_1);
-        SecurityContextHolder.getContext().setAuthentication(auth);
         when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(USER_1));
         when(userDtoMapper.toDto(any(User.class))).thenReturn(USER_DTO_1);
 
-        //assertEquals(out.getUser(), USER_DTO_1);
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/users/me") //посылаем
                         .contentType(MediaType.APPLICATION_JSON)
-//                        .content(objectMapper.writeValueAsString(COMMENT_DTO_1))
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json(jsonResult));
-
-        SecurityContextHolder.clearContext();
     }
 
     @Test
+    @WithMockUser (username = USERNAME_1)
     void setPassword() throws Exception {
         String jsonResult = objectMapper.writeValueAsString(NEW_PASSWORD_DTO_1);
 
-        when(auth.getName()).thenReturn(USERNAME_1);
-        SecurityContextHolder.getContext().setAuthentication(auth);
         when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(USER_1));
         when(userRepository.save(any(User.class))).thenReturn(USER_1);
 
-        //assertEquals(out.setPassword(NEW_PASSWORD_DTO_1), NEW_PASSWORD_DTO_1);
         mockMvc.perform(MockMvcRequestBuilders
                                 .post("/users/set_password") //посылаем
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -94,21 +98,17 @@ class UsersApiControllerTest {
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json(jsonResult));
-
-        SecurityContextHolder.clearContext();
     }
 
     @Test
+    @WithMockUser (username = USERNAME_1)
     void updateUser() throws Exception {
         String jsonResult = objectMapper.writeValueAsString(USER_DTO_1);
 
-        when(auth.getName()).thenReturn(USERNAME_1);
-        SecurityContextHolder.getContext().setAuthentication(auth);
         when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(USER_1));
         when(userDtoMapper.toDto(any(User.class))).thenReturn(USER_DTO_1);
         when(userRepository.save(any(User.class))).thenReturn(USER_1);
 
-        //assertEquals(out.updateUser(USER_DTO_1), USER_DTO_1);
         mockMvc.perform(MockMvcRequestBuilders
                         .patch("/users/me") //посылаем
                         .contentType(MediaType.APPLICATION_JSON)
@@ -116,32 +116,39 @@ class UsersApiControllerTest {
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json(jsonResult));
-
-        SecurityContextHolder.clearContext();
     }
 
     @Test
+    @WithMockUser (username = USERNAME_1)
     void updateUserImage() throws Exception {
-        String jsonResult = objectMapper.writeValueAsString(USER_DTO_1);
+        UserDto userDto = new UserDto();
+        userDto.setCity(USER_DTO_1.getCity());
+        userDto.setImage("/files/user_avatar_test.jpg/download");
+        userDto.setId(USER_DTO_1.getId());
+        userDto.setEmail(USER_DTO_1.getEmail());
+        userDto.setPhone(USER_DTO_1.getPhone());
+        userDto.setFirstName(USER_DTO_1.getFirstName());
+        userDto.setLastName(USER_DTO_1.getLastName());
+        userDto.regDate(USER_DTO_1.getRegDate());
+        String jsonResult = objectMapper.writeValueAsString(userDto);
 
-        when(auth.getName()).thenReturn(USERNAME_1);
-        SecurityContextHolder.getContext().setAuthentication(auth);
         when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(USER_1));
         when(userRepository.save(any(User.class))).thenReturn(USER_1);
         when(userDtoMapper.toDto(any(User.class))).thenReturn(USER_DTO_1);
-        //when(imageService.uploadFile(null)).thenReturn(Path.of(IMAGE_1));
-        when(imageService.uploadFile(any())).thenReturn(Path.of("src/main/resources/pictures/user_avatar.jpg"));
+        when(imageService.uploadFile(any())).thenReturn(Path.of("/files/user_avatar_test.jpg/download"));
 
         MockMultipartHttpServletRequestBuilder patchMultipart = (MockMultipartHttpServletRequestBuilder)
                 MockMvcRequestBuilders.multipart("/users/me/image")
                         .with(rq -> { rq.setMethod("PATCH"); return rq; });
 
+        MockMultipartFile image = new MockMultipartFile("image", "user_avatar_test.jpg", MediaType.IMAGE_JPEG_VALUE,
+        Files.readAllBytes(Path.of("src/test/resources/user_avatar_test.jpg")) );
+
         mockMvc.perform(patchMultipart
-                        .file("image", Files.readAllBytes(Path.of("src/main/resources/pictures/user_avatar.jpg")))
+                        .file(image)
+                        .accept("application/json")
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json(jsonResult));
-
-        SecurityContextHolder.clearContext();
     }
 }

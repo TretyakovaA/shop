@@ -50,7 +50,7 @@ public class AdsApiController  {
             @ApiResponse(responseCode = "403", description = "Forbidden"),
             @ApiResponse(responseCode = "404", description = "Not Found")})
     @RequestMapping(value = "/ads",
-            produces = {"*/*"},
+            produces = {"application/json"},
             consumes = {"multipart/form-data"},
             method = RequestMethod.POST)
     @PreAuthorize("(hasRole('USER') or hasRole('ADMIN')) and (#username == authentication.principal.username)")

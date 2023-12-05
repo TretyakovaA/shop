@@ -97,6 +97,7 @@ public class UsersApiController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "404", description = "Not Found")})
     @RequestMapping(value = "/users/me/image",
+            produces = {"application/json"},
             consumes = {"multipart/form-data"},
             method = RequestMethod.PATCH)
     @PreAuthorize("(hasRole('USER') or hasRole('ADMIN')) and (#username == authentication.principal.username) ")

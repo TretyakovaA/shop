@@ -1,6 +1,7 @@
 package io.shop.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.shop.dto.AdDto;
 import io.shop.mapper.*;
 import io.shop.model.Ad;
 import io.shop.model.Comment;
@@ -87,30 +88,6 @@ class AdsApiControllerTest {
 
     @MockBean
     private UserRepository userRepository;
-
-    @Test
-    void addAds() throws Exception {
-        String jsonResult = objectMapper.writeValueAsString(AD_DTO_1);
-        when(auth.getName()).thenReturn(USERNAME_1);
-        SecurityContextHolder.getContext().setAuthentication(auth);
-        when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(USER_1));
-        when(createAdDtoMapper.toEntity(CREATE_AD_DTO_1)).thenReturn(AD_1);
-        when(adRepository.save(any(Ad.class))).thenReturn((AD_1));
-        when(imageService.uploadFile(any())).thenReturn(Path.of("/files/user_avatar_test.jpg/download"));
-        when(adDtoMapper.toDto(AD_1)).thenReturn(AD_DTO_1);
-        String myContent = objectMapper.writeValueAsString(CREATE_AD_DTO_1);
-        MockMultipartFile jsonValue =
-                new MockMultipartFile("properties", null, MediaType.APPLICATION_JSON_VALUE, myContent.getBytes());
-
-        mockMvc.perform(multipart("/ads") //посылаем
-                        .file(jsonValue)
-                        .file("image", Files.readAllBytes(Path.of("src/test/java/resources/user_avatar_test.jpg")))
-                ).andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().json(jsonResult));
-
-        SecurityContextHolder.clearContext();
-    }
 
     @Test
     void addComments() throws Exception {
@@ -297,5 +274,43 @@ class AdsApiControllerTest {
                 .andExpect(content().json(jsonResult));
 
         SecurityContextHolder.clearContext();
+    }
+
+    @Test
+    void addAds() throws Exception {
+        AdDto adDto = new AdDto();
+        adDto.setAuthor(AD_DTO_1.getAuthor());
+        adDto.setPrice(AD_DTO_1.getPrice());
+        adDto.setImage(List.of("/files/user_avatar_test.jpg/download"));
+        adDto.setPk(AD_DTO_1.getPk());
+        adDto.setTitle(AD_DTO_1.getTitle());
+        String jsonResult = objectMapper.writeValueAsString(adDto);
+
+        when(auth.getName()).thenReturn(USERNAME_1);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(USER_1));
+        when(createAdDtoMapper.toEntity(CREATE_AD_DTO_1)).thenReturn(AD_1);
+        when(adRepository.save(any(Ad.class))).thenReturn((AD_1));
+        when(imageService.uploadFile(any())).thenReturn(Path.of("/files/user_avatar_test.jpg/download"));
+        when(adDtoMapper.toDto(AD_1)).thenReturn(AD_DTO_1);
+        String myContent = objectMapper.writeValueAsString(CREATE_AD_DTO_1);
+
+        MockMultipartFile jsonValue =
+                new MockMultipartFile("properties", null, MediaType.APPLICATION_JSON_VALUE, myContent.getBytes());
+
+        MockMultipartFile image = new MockMultipartFile("image", "user_avatar_test.jpg",
+                MediaType.IMAGE_JPEG_VALUE, Files.readAllBytes(Path.of("src/test/resources/user_avatar_test.jpg")) );
+
+        mockMvc.perform(multipart("/ads") //посылаем
+                        .file(jsonValue)
+                        .file(image)
+                        .accept("application/json")
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().json(jsonResult));
+
+        SecurityContextHolder.clearContext();
+        AD_1.setStoredImage(null);
+        AD_DTO_1.setImage(null);
     }
 }
