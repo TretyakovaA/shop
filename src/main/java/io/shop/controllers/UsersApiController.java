@@ -53,10 +53,10 @@ public class UsersApiController {
     @RequestMapping(value = "/users/me",
             produces = {"application/json"},
             method = RequestMethod.GET)
-//    @PreAuthorize("(hasRole('USER') or hasRole('ADMIN')) and (#username == authentication.principal.username)")
-    public ResponseEntity<UserDto> getUser1(Integer id) {
-
-        return ResponseEntity.ok(userService.getUser(id));
+   //@PreAuthorize("(hasRole('USER') or hasRole('ADMIN')) ")
+   @PreAuthorize("(hasRole('USER') or hasRole('ADMIN')) and (#username == authentication.principal.username)")
+    public ResponseEntity<UserDto> getUser1() {
+        return ResponseEntity.ok(userService.getUser());
     }
 
     @Operation(summary = "setPassword", description = "", tags = {"Пользователи"})
@@ -69,7 +69,7 @@ public class UsersApiController {
             produces = {"application/json"},
             consumes = {"application/json"},
             method = RequestMethod.POST)
-//    @PreAuthorize("(hasRole('USER') or hasRole('ADMIN')) and (#username == authentication.principal.username)")
+    @PreAuthorize("(hasRole('USER') or hasRole('ADMIN')) and (#username == authentication.principal.username)")
     public ResponseEntity<NewPasswordDto> setPassword(@Parameter(in = ParameterIn.DEFAULT, description = "", required = true,
             schema = @Schema()) @Valid @RequestBody NewPasswordDto body) {
         return ResponseEntity.ok(userService.setPassword(body));
@@ -86,7 +86,7 @@ public class UsersApiController {
             produces = {"application/json"},
             consumes = {"application/json"},
             method = RequestMethod.PATCH)
-//    @PreAuthorize("(hasRole('USER') or hasRole('ADMIN')) and (#username == authentication.principal.username)")
+    @PreAuthorize("(hasRole('USER') or hasRole('ADMIN')) and (#username == authentication.principal.username)")
     public ResponseEntity<UserDto> updateUser(@Parameter(in = ParameterIn.DEFAULT, description = "", required = true,
             schema = @Schema()) @Valid @RequestBody UserDto body) {
         return ResponseEntity.ok(userService.updateUser(body));
@@ -97,11 +97,12 @@ public class UsersApiController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "404", description = "Not Found")})
     @RequestMapping(value = "/users/me/image",
+            produces = {"application/json"},
             consumes = {"multipart/form-data"},
             method = RequestMethod.PATCH)
-//    @PreAuthorize("(hasRole('USER') or hasRole('ADMIN')) and (#username == authentication.principal.username) ")
-    public ResponseEntity<UserDto> updateUserImage(@Parameter(description = "file detail")
-                                                @Valid @RequestPart("file") MultipartFile image) throws IOException {
+    @PreAuthorize("(hasRole('USER') or hasRole('ADMIN')) and (#username == authentication.principal.username) ")
+    public ResponseEntity<UserDto> updateUserImage(@Parameter(description = "image detail")
+                                               @Valid @RequestPart("image") MultipartFile image) throws IOException {
         return ResponseEntity.ok(userService.updateUserImage(image));
     }
 

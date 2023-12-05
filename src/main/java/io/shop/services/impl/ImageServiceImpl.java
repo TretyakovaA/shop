@@ -1,16 +1,24 @@
 package io.shop.services.impl;
 
 import io.shop.exceptions.AdNotFoundException;
-import io.shop.model.StoredImage;
-import io.shop.repository.StoredImageRepository;
+import io.shop.exceptions.UserNotFoundException;
 import io.shop.model.Ad;
+import io.shop.model.StoredImage;
+import io.shop.model.User;
 import io.shop.repository.AdRepository;
+import io.shop.repository.StoredImageRepository;
+import io.shop.repository.UserRepository;
+import io.shop.services.api.AdService;
 import io.shop.services.api.ImageService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,14 +39,20 @@ public class ImageServiceImpl implements ImageService {
     private String filesDir;
     private final AdRepository adRepository;
 
-    public ImageServiceImpl(StoredImageRepository storedImageRepository, AdRepository adRepository) {
+    private final UserRepository userRepository;
+
+    Logger logger = LoggerFactory.getLogger(AdService.class);
+
+    public ImageServiceImpl(StoredImageRepository storedImageRepository, AdRepository adRepository, UserRepository userRepository) {
         this.storedImageRepository = storedImageRepository;
         this.adRepository = adRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
     public Path uploadFile(MultipartFile file) throws IOException {
         Path filePath = Path.of(filesDir,file.getOriginalFilename());
+
         Files.createDirectories(filePath.getParent());
         Files.deleteIfExists(filePath);
 
@@ -68,30 +82,38 @@ public class ImageServiceImpl implements ImageService {
         } else {
             return ResponseEntity.notFound().build();
         }
-
-       /* Path path = Path.of(filesDir + "/" + name);
-
-        try (
-                InputStream is = Files.newInputStream(path);
-                OutputStream os = response.getOutputStream();
-        ) {
-            response.setStatus(200);
-            response.setContentType(String.valueOf(MediaType.APPLICATION_OCTET_STREAM));
-            response.setContentLength((int) Files.size(path));
-            response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + name);
-            is.transferTo(os);
-        }*/
     }
 
     @Override
-    public List<byte[]> updateImage(Integer id, MultipartFile image) throws IOException {
+    public List<byte[]> updateImage(Integer adId, MultipartFile image) throws IOException {
+        //редактировать изображение может только зарегистрированный пользователь
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findByUsername(auth.getName()).orElseThrow(()
+                -> {
+            logger.info("Не удалось обновить изображение. " + "Пользователь с именем " + auth.getName() + " не найден в базе");
+            throw new UserNotFoundException("Пользователь с именем " + auth.getName() + " не найден в базе");
+        });
+
+        //пользователь может изменить только свое изображение
+        Ad ad = adRepository.findById(adId).orElseThrow(()
+                -> {
+            logger.info("Пользователь: " + auth.getName() + " : Изображение не обновлено, объявление с id " + adId + " не найдено");
+            throw new AdNotFoundException(adId);
+        });
+
+        if (ad.getAuthor().getId()!= user.getId()) {
+            logger.info("Пользователь: " + auth.getName() + " : Изображение не обновлено, нет прав на редактирование изображения");
+            throw new RuntimeException("нет прав на редактирование изображения");
+        }
+
         Path path = uploadFile(image);
-        Ad ad = adRepository.findById(id).orElseThrow(()
-                -> { throw new AdNotFoundException(id);});
         StoredImage storedImage = new StoredImage();
-        storedImage.setPath(path.toString());
+        storedImage.setPath("/files/"+path.getFileName().toString()+"/download");
+        storedImage.setAd(ad);
         storedImage = storedImageRepository.save(storedImage);
         ad.setStoredImage(Arrays.asList(storedImage));
+
+        logger.info("Пользователь: " + auth.getName() + " : Изображение обновлено");
         return Collections.singletonList(image.getBytes());
     }
 }

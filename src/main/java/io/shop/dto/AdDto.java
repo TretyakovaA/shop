@@ -1,12 +1,13 @@
 package io.shop.dto;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
+import java.util.Objects;
 
 /**
  * AdDto
@@ -51,9 +52,19 @@ public class AdDto {
     this.author = author;
   }
 
+  public AdDto() {
+  }
+
   public AdDto image(List<String> image) {
     this.image = image;
     return this;
+  }
+
+  public AdDto(Integer author, Integer pk, Integer price, String title) {
+    this.author = author;
+    this.pk = pk;
+    this.price = price;
+    this.title = title;
   }
 
   public AdDto addImageItem(String imageItem) {

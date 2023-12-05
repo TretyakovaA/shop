@@ -34,14 +34,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getUser(Integer id) {
-        User foundUser = userRepository.findById(id).orElseThrow(() -> {
-            logger.info("Пользователь с id " + id + " не найден");
-            throw new UserNotFoundException(id);
+    public UserDto getUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findByUsername(auth.getName()).orElseThrow(()
+                -> {
+            logger.info("Комментарий не удален. " + "Пользователь с именем " + auth.getName() + " не найден в базе");
+            throw new UserNotFoundException("Пользователь с именем " + auth.getName() + " не найден в базе");
         });
 
-        logger.info("Пользователь с id " + id + " найден");
-        return userDtoMapper.toDto(foundUser);
+        logger.info("Пользователь с логином " + auth.getName() + " найден");
+        return userDtoMapper.toDto(user);
     }
 
     @Override
@@ -49,21 +51,30 @@ public class UserServiceImpl implements UserService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(auth.getName()).orElseThrow(()
                 -> {
-            throw new RuntimeException("Пользователь с именем "+ auth.getName()+" не найден в базе");});
+            logger.info("Пароль не изменен. " + "Пользователь с именем " + auth.getName() + " не найден в базе");
+            throw new UserNotFoundException("Пользователь с именем " + auth.getName() + " не найден в базе");
+        });
+
         if (user.getPassword().equals(body.getCurrentPassword())) {
             user.setPassword(body.getNewPassword());
             userRepository.save(user);
+            logger.info("Пользователь : " + auth.getName() + " : изменил пароль");
             return body;
         }
+
+        logger.info("Пользователь : " + auth.getName() + " : не удалось изменить пароль, неверный текущий пароль");
         return null;
     }
 
     @Override
     public UserDto updateUser(UserDto body) {
-        User oldUser = userRepository.findById(body.getId()).orElseThrow(()
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User oldUser = userRepository.findByUsername(auth.getName()).orElseThrow(()
                 -> {
-            throw new UserNotFoundException(body.getId());
+            logger.info("Информация о пользователе не обновлена. " + "Пользователь с именем " + auth.getName() + " не найден в базе");
+            throw new UserNotFoundException("Пользователь с именем " + auth.getName() + " не найден в базе");
         });
+
         if (body.getCity() != null) {
             oldUser.setCity(body.getCity());
         }
@@ -85,18 +96,30 @@ public class UserServiceImpl implements UserService {
         if (body.getRegDate() != null) {
             oldUser.setRegDate(body.getRegDate());
         }
+
+        logger.info("Пользователь : " + auth.getName() + " обновлен");
         return userDtoMapper.toDto(userRepository.save(oldUser));
     }
 
+    /*
+    Поле image в DTO - это путь к эндпоинту,
+    с помощью которого фронтеэнд это изображение может запросить, например:
+    "/files/01.png/download"
+     */
     @Override
     public UserDto updateUserImage(MultipartFile image) throws IOException {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(auth.getName()).orElseThrow(()
                 -> {
-            throw new RuntimeException("Пользователь с именем "+ auth.getName()+" не найден в базе");});
+            logger.info("Аватар пользователя не обновлен. " + "Пользователь с именем " + auth.getName() + " не найден в базе");
+            throw new UserNotFoundException("Пользователь с именем " + auth.getName() + " не найден в базе");
+        });
+
         Path path = imageService.uploadFile(image);
-        user.setImage(path.toString());
+        user.setImage("/files/" + path.getFileName().toString() + "/download");
         userRepository.save(user);
+
+        logger.info("Пользователь : " + auth.getName() + " аватар обновлен");
         return userDtoMapper.toDto(user);
     }
 }

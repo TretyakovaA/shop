@@ -14,5 +14,5 @@ public interface ImageService {
 
     ResponseEntity<Object> downloadFile(String name, HttpServletResponse response) throws IOException;
 
-    List<byte[]> updateImage(Integer id, MultipartFile image) throws IOException;
+    List<byte[]> updateImage(Integer adId, MultipartFile image) throws IOException;
 }

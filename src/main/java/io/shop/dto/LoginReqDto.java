@@ -20,9 +20,17 @@ public class LoginReqDto {
   @JsonProperty("username")
   private String username = null;
 
+  public LoginReqDto() {
+  }
+
   public LoginReqDto password(String password) {
     this.password = password;
     return this;
+  }
+
+  public LoginReqDto(String password, String username) {
+    this.password = password;
+    this.username = username;
   }
 
   /**

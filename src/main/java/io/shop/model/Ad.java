@@ -41,6 +41,18 @@ public class Ad {
     @ToString.Exclude
     List<Comment> comments;
 
+    public Ad() {
+    }
+
+    public Ad(Integer pk, String title, String description, Integer price, User author, List<Comment> comments) {
+        this.pk = pk;
+        this.title = title;
+        this.description = description;
+        this.price = price;
+        this.author = author;
+        this.comments = comments;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

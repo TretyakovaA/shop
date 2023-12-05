@@ -32,9 +32,13 @@ public class FullAdDtoMapper {
         fullAdDto.setPrice(ad.getPrice());
         fullAdDto.setTitle(ad.getTitle());
         List<String> tempList = new ArrayList<>();
-        for (int i = 0; i < ad.getStoredImage().size(); i++){
-            String temp =  ad.getStoredImage().get(i).getPath();
-            tempList.add(temp);
+        if (ad.getStoredImage()== null){
+            tempList = null;
+        } else {
+            for (int i = 0; i < ad.getStoredImage().size(); i++) {
+                String temp = ad.getStoredImage().get(i).getPath();
+                tempList.add(temp);
+            }
         }
         fullAdDto.setImage(tempList);
         return fullAdDto;

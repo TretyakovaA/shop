@@ -1,6 +1,7 @@
 package io.shop.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.shop.services.api.AdService;
 import io.shop.services.api.ImageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -35,11 +36,14 @@ public class ImageApiController {
     private final HttpServletRequest request;
     private final ImageService imageService;
 
+    private final AdService adService;
+
     @org.springframework.beans.factory.annotation.Autowired
-    public ImageApiController(ObjectMapper objectMapper, HttpServletRequest request, ImageService imageService) {
+    public ImageApiController(ObjectMapper objectMapper, HttpServletRequest request, ImageService imageService, AdService adService) {
         this.objectMapper = objectMapper;
         this.request = request;
         this.imageService = imageService;
+        this.adService = adService;
     }
 
     @Operation(summary = "updateAdsImage", description = "", tags={ "Изображения" })
@@ -47,14 +51,21 @@ public class ImageApiController {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/octet-stream",
                     array = @ArraySchema(schema = @Schema(implementation = byte[].class)))),
             @ApiResponse(responseCode = "404", description = "Not Found") })
-    @RequestMapping(value = "/image/{id}",
+    //@RequestMapping(value = "/image/{id}",
+    @RequestMapping(value = "/ads/{id}/image",
             produces = { "application/octet-stream" },
             consumes = { "multipart/form-data" },
             method = RequestMethod.PATCH)
     public ResponseEntity<List<byte[]>> updateImage(@Parameter(in = ParameterIn.PATH, description = "", required=true,
-            schema=@Schema()) @PathVariable("id") Integer id,
-            @Parameter(description = "file detail") @Valid @RequestPart("file") MultipartFile image) throws IOException {
-        return ResponseEntity.ok(imageService.updateImage(id, image));
+            schema=@Schema()) @PathVariable("id") Integer adId,
+            @Parameter(description = "image detail") @Valid @RequestPart("image") MultipartFile image) throws IOException {
+        return ResponseEntity.ok(imageService.updateImage(adId, image));
     }
+
+//    @Operation(summary = "get ad image", tags={ "Изображения" })
+//    @GetMapping(value = "/ads/image/{name}", produces = MediaType.IMAGE_PNG_VALUE)
+//    ResponseEntity<byte[]> getAdImage(@PathVariable("name") String name) {
+//        return ResponseEntity.ok(adService.getImageById(name));
+//    }
 
 }

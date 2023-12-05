@@ -25,4 +25,6 @@ public interface AdService {
     AdDto updateAds(Integer id, CreateAdDto body);
 
     CommentDto updateComments(Integer adPk, Integer id, CommentDto body);
+
+   // byte[] getImageById(String id);
 }
